@@ -1,0 +1,242 @@
+{
+    "icons": {
+        "bitmap": "toolbar.png",
+        "images": [
+            "0_init",
+            "1_open",
+            "2_save",
+            "3_form",
+            "4_form_anchors",
+            "5_form_loads",
+            "6_form_check_dof",
+            "7_force",
+            "8_form_move_nodes",
+            "9_update_force",
+            "10_force_move_nodes",
+            "11_update_form",
+            "12_auto_constraints",
+            "13_vertex_constraints",
+            "14_edge_constraints",
+            "15_update_both",
+            "16_inspect",
+            "17_load_path",
+            "18_unified_diagram",
+            "19_settings",
+            "20_redraw",
+            "21_clear"
+        ]
+    },
+    "commands": [
+        {
+            "name": "IGS_force_from_form",
+            "icon": 7,
+            "menu_text": "Create ForceDiagram",
+            "tooltip": "Create ForceDiagram"
+        },
+        {
+            "name": "IGS_force_move_nodes",
+            "icon": 10,
+            "menu_text": "Move ForceDiagram vertices",
+            "tooltip": "Move ForceDiagram vertices"
+        },
+        {
+            "name": "IGS_force_move",
+            "menu_text": "ForceDiagram location",
+            "tooltip": "Move ForceDiagram"
+        },
+        {
+            "name": "IGS_force_scale",
+            "menu_text": "ForceDiagram scale",
+            "tooltip": "Scale ForceDiagram"
+        },
+        {
+            "name": "IGS_force_select_anchor",
+            "menu_text": "Select ForceDiagram anchor point"
+        },
+        {
+            "name": "IGS_force_select_fixed",
+            "menu_text": "Fix Force vertex",
+            "tooltip": "Fix Force Vertex in x, y"
+        },
+        {
+            "name": "IGS_force_update",
+            "icon": 9,
+            "menu_text": "Update ForceDiagram",
+            "tooltip": "Update ForceDiagram from FormDiagram"
+        },
+        {
+            "name": "IGS_form_assign_forces",
+            "icon": 5,
+            "menu_text": "Select and assign forces",
+            "tooltip": "Assign forces"
+        },
+        {
+            "name": "IGS_form_check_dof",
+            "icon": 6,
+            "menu_text": "Check degree of freedom",
+            "tooltip": "Check DoF"
+        },
+        {
+            "name": "IGS_form_compute_loadpath",
+            "icon": 17,
+            "menu_text": "Compute loadpath",
+            "tooltip": "Compute loadpath"
+        },
+        {
+            "name": "IGS_form_constraints_vertex",
+            "menu_text": "Assign vertex constraints",
+            "icon": 13,
+            "tooltip": "Assign vertex constraints"
+        },
+        {
+            "name": "IGS_form_default_constraints",
+            "icon": 12,
+            "menu_text": "Assign default constraints",
+            "tooltip": "Assign default constraints"
+        },
+        {
+            "name": "IGS_form_loads",
+            "menu_text": "Assign form loads",
+            "tooltip": "Assign loads to the form diagram"
+        },
+        {
+            "name": "IGS_form_move_nodes",
+            "icon": 8,
+            "menu_text": "Move Form vertices",
+            "tooltip": "Move FormDiagram vertices"
+        },
+        {
+            "name": "IGS_form_move",
+            "menu_text": "FormDiagram location"
+        },
+        {
+            "name": "IGS_form_select_fixed",
+            "icon": 4,
+            "menu_text": "Identify anchors",
+            "tooltip": "Identify anchors"
+        },
+        {
+            "name": "IGS_form_select_ind",
+            "menu_text": "Select independents edges"
+        },
+        {
+            "name": "IGS_form_update_from_force",
+            "icon": 11,
+            "menu_text": "Update Form from Force",
+            "tooltip": "Update FormDiagram from ForceDiagram"
+        },
+        {
+            "name": "IGS_form_update_from_qind",
+            "icon": 11,
+            "menu_text": "Update Form from Q ind",
+            "tooltip": "Update FormDiagram from Q ind"
+        },
+        {
+            "name": "IGS_form",
+            "icon": 3,
+            "menu_text": "Create FormDiagram",
+            "tooltip": "Create FormDiagram"
+        },
+        {
+            "name": "IGS_scene_clear",
+            "icon": 21,
+            "tooltip": "Clear the scene"
+        },
+        {
+            "name": "IGS_scene_redraw",
+            "icon": 20,
+            "tooltip": "Redraw the scene"
+        },
+        {
+            "name": "IGS_session_open",
+            "tooltip": "Load a session"
+        },
+        {
+            "name": "IGS_session_redo",
+            "tooltip": "Redo one step"
+        },
+        {
+            "name": "IGS_session_save",
+            "tooltip": "Save the current session"
+        },
+        {
+            "name": "IGS_session_undo",
+            "tooltip": "Undo one step"
+        },
+        {
+            "name": "IGS_settings",
+            "icon": 19,
+            "tooltip": "Modify the settings"
+        },
+        {
+            "name": "IGS",
+            "tooltip": "Display the IGS window"
+        }
+    ],
+    "menus": [
+        {
+            "name": "IGS",
+            "items": []
+        }
+    ],
+    "toolbars": [
+        {
+            "name": "IGS",
+            "items": [
+                {
+                    "left": "IGS_form"
+                },
+                {
+                    "type": "separator"
+                },
+                {
+                    "left": "IGS_form_select_fixed"
+                },
+                {
+                    "left": "IGS_form_loads"
+                },
+                {
+                    "left": "IGS_form_check_dof"
+                },
+                {
+                    "type": "separator"
+                },
+                {
+                    "left": "IGS_force_from_form"
+                },
+                {
+                    "type": "separator"
+                },
+                {
+                    "left": "IGS_form_move_nodes"
+                },
+                {
+                    "left": "IGS_force_update"
+                },
+                {
+                    "type": "separator"
+                },
+                {
+                    "left": "IGS_force_move_nodes"
+                },
+                {
+                    "left": "IGS_form_update_from_force"
+                },
+                {
+                    "type": "separator"
+                },
+                {
+                    "left": "IGS_form_compute_loadpath"
+                }
+            ]
+        }
+    ],
+    "toolbargroups": [
+        {
+            "name": "IGS",
+            "toolbars": [
+                "IGS"
+            ]
+        }
+    ]
+}
