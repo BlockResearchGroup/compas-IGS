@@ -1,3 +1,5 @@
-compas >=1, <2.0
-compas_ags
-compas_ui >=0.6.1
+compas >= 2.5
+compas_ags >=1.2.1
+compas_rui >= 0.3.1
+compas_session >= 0.4.1
+pydantic

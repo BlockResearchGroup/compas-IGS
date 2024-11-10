@@ -1,13 +1,10 @@
-name: csd2
+name: igs-dev
 channels:
-    - conda-forge
-
+  - conda-forge
 dependencies:
-   - python=3.9
-   - pip
-   - pip:
-     - compas=1.17.9
-     - compas_cloud
-     - compas_ui
-     - compas_ags
-     - compas_igs2
+  - python
+  - pip
+  - compas >=2.5
+  - compas_occ
+  - pip:
+      - -e .[dev]

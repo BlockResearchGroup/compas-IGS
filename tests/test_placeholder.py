@@ -1,6 +1,6 @@
-import compas_igs2
+import compas_igs
 
 
 def test_trivial():
-    print(compas_igs2.__version__)
+    print(compas_igs.__version__)
     assert True
