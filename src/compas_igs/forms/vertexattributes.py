@@ -21,14 +21,14 @@ class Attribute(BaseModel):
     width: int = 0
 
 
-class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
+class VertexAttributesForm(Eto.Forms.Dialog[bool]):
     """"""
 
     def __init__(
         self,
         attributes: list[Attribute],
-        edges: dict[tuple[int, int], Any],
-        title: str = "Edge Attributes",
+        vertices: dict[tuple[int, int], Any],
+        title: str = "Vertex Attributes",
         width: int = 500,
         height: int = 500,
     ) -> None:
@@ -59,9 +59,9 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
         column.DataCell = Eto.Forms.TextBoxCell(0)
         self.table.Columns.Add(column)
 
-        # edge column
+        # vertex column
         column = Eto.Forms.GridColumn()
-        column.HeaderText = "Edge"
+        column.HeaderText = "Vertex"
         column.Editable = False
         column.Expand = True
         column.Width = 48
@@ -79,12 +79,12 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
             column.DataCell = Eto.Forms.TextBoxCell(index + 2)
             self.table.Columns.Add(column)
 
-        # edge data rows
+        # vertex data rows
         rows = []
-        for index, edge in enumerate(edges):
-            values = [repr(index), repr(edge)]
+        for index, vertex in enumerate(vertices):
+            values = [repr(index), repr(vertex)]
             for model in self.attributes:
-                values.append(repr(edges[edge][model.name]))
+                values.append(repr(vertices[vertex][model.name]))
             row = Eto.Forms.GridItem()
             row.Values = values
             rows.append(row)
@@ -103,7 +103,7 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
     @property
     def ok(self):
         self.DefaultButton = Eto.Forms.Button()
-        self.DefaultButton.Text = "OK1"
+        self.DefaultButton.Text = "OK"
         self.DefaultButton.Click += self.on_ok
         return self.DefaultButton
 
@@ -115,14 +115,14 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
         return self.AbortButton
 
     @property
-    def temp(self):
-        edges = {}
+    def vertexdata(self):
+        vertices = {}
         for row in self.table.DataStore:
-            edge = ast.literal_eval(row.getValue(1))
-            edges[edge] = {}
+            vertex = ast.literal_eval(row.getValue(1))
+            vertices[vertex] = {}
             for i, model in enumerate(self.attributes):
-                edges[edge][model.name] = ast.literal_eval(row.GetValue(2 + i))
-        return edges
+                vertices[vertex][model.name] = ast.literal_eval(row.GetValue(2 + i))
+        return vertices
 
     def on_ok(self, sender, event):
         self.Close(True)
@@ -142,24 +142,23 @@ if __name__ == "__main__":
     from compas.datastructures import Mesh
 
     mesh = Mesh.from_meshgrid(10, 10)
-    mesh.update_default_edge_attributes({"q": 1.0, "f": 10, "is_ind": False})
+    mesh.update_default_vertex_attributes({"a": 1.0, "b": 10, "c": False})
 
     attributes = [
-        Attribute(name="l", text="L", value=float, width=48),
-        Attribute(name="q", text="Q", value=float, width=48),
-        Attribute(name="f", text="F", value=float, width=48),
-        Attribute(name="is_ind", text="IND", value=bool, width=48),
+        Attribute(name="a", text="A", value=float, width=48),
+        Attribute(name="b", text="B", value=float, width=48),
+        Attribute(name="c", text="C", value=float, width=48),
     ]
 
-    edges = {}
-    for edge in mesh.edges():
-        edges[edge] = {}
+    vertices = {}
+    for vertex in mesh.vertices():
+        vertices[vertex] = {}
         for attr in attributes:
-            edges[edge][attr.name] = mesh.edge_attribute(edge, name=attr.name)
+            vertices[vertex][attr.name] = mesh.vertex_attribute(vertex, name=attr.name)
 
-    form = EdgeAttributesForm(attributes, edges)
+    form = VertexAttributesForm(attributes, vertices)
 
     if form.show():
-        for edge, data in form.temp.items():
+        for vertex, data in form.vertexdata.items():
             for attr, value in zip(attributes, data):
                 print(attr.name, value)
