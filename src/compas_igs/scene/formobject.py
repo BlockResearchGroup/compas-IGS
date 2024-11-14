@@ -4,6 +4,7 @@ from compas.colors import Color
 from compas.scene.descriptors.color import ColorAttribute
 from compas.scene.descriptors.colordict import ColorDictAttribute
 from compas_ags.diagrams import FormDiagram
+from compas_igs.forms import EdgeForcesForm
 from compas_rui.scene import RUIMeshObject
 
 
@@ -51,10 +52,21 @@ class RhinoFormObject(RUIMeshObject):
     # Draw
     # =============================================================================
 
+    def draw(self):
+        # for vertex in self.diagram.vertices():
+        #     if self.diagram.vertex_attribute(vertex, "is_fixed"):
+        #         self.vertexcolor[vertex] = self.vertexcolor_fixed
+
+        super().draw()
+
+        return self.guids
+
     def draw_vertices(self):
         for vertex in self.diagram.vertices():
             if self.diagram.vertex_attribute(vertex, "is_fixed"):
                 self.vertexcolor[vertex] = self.vertexcolor_fixed
+            elif self.diagram.vertex_attribute(vertex, "line_constraint"):
+                self.vertexcolor[vertex] = self.vertexcolor_lineconstraint
 
         return super().draw_vertices()
 
@@ -92,8 +104,8 @@ class RhinoFormObject(RUIMeshObject):
     def redraw(self):
         rs.EnableRedraw(False)
         self.clear_vertices()
-        self.clear_edges()
         self.draw_vertices()
+        self.clear_edges()
         self.draw_edges()
         rs.EnableRedraw(True)
         rs.Redraw()
@@ -103,8 +115,8 @@ class RhinoFormObject(RUIMeshObject):
     # =============================================================================
 
     def select_fixed_vertices(self):
-        self.show_vertices = list(self.diagram.vertices())
-        self.redraw_vertices()
+        # self.show_vertices = list(self.diagram.vertices())
+        # self.redraw_vertices()
 
         selected = self.select_vertices(message="Select ALL fixed vertices (others will be unfixed).")
         if selected:
@@ -114,8 +126,8 @@ class RhinoFormObject(RUIMeshObject):
         return selected
 
     def select_independent_edges(self):
-        self.show_vertices = list(self.diagram.edges_where(_is_edge=True))
-        self.redraw_vertices()
+        # self.show_edges = list(self.diagram.edges_where(_is_edge=True))
+        # self.redraw_edges()
 
         selected = self.select_edges(message="Select ALL independent edges.")
         if selected:
@@ -123,3 +135,23 @@ class RhinoFormObject(RUIMeshObject):
             self.diagram.edges_attribute(name="is_ind", value=True, keys=selected)
 
         return selected
+
+    # =============================================================================
+    # Other
+    # =============================================================================
+
+    def assign_forces(self):
+        edges = list(self.diagram.edges_where(is_ind=True))
+        if not edges:
+            return rs.MessageBox(message="Please identify the independent edges first.")
+
+        self.draw_edgelabels(text={edge: index for index, edge in enumerate(edges)}, color=self.edgecolor)
+        rs.Redraw()
+
+        rows = [[index, edge, self.diagram.edge_attribute(edge, name="f")] for index, edge in enumerate(edges)]
+
+        form = EdgeForcesForm(rows, title="Assign Forces")
+        if form.show():
+            for row in form.rows:
+                index, edge, force = row
+                self.diagram.edge_attribute(edge, name="f", value=force)
