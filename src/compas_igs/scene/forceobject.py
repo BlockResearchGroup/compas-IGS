@@ -41,6 +41,9 @@ class RhinoForceObject(RUIMeshObject):
     def __init__(
         self,
         disjoint=True,
+        anchor: Optional[int] = None,
+        location: Optional[Point] = None,
+        scale: Optional[float] = 1.0,
         **kwargs,
     ):
         super().__init__(disjoint=disjoint, **kwargs)
@@ -49,9 +52,21 @@ class RhinoForceObject(RUIMeshObject):
         self._location = None
         self._scale = None
 
+        self.anchor = anchor
+        self.location = location
+        self.scale = scale
+
         self.show_faces = False
         self.show_edges = True
         self.show_vertices = True
+
+    @property
+    def settings(self):
+        settings = super().settings
+        settings["anchor"] = self.anchor
+        settings["location"] = self.location
+        settings["scale"] = self.scale
+        return settings
 
     @property
     def diagram(self) -> ForceDiagram:
@@ -117,13 +132,13 @@ class RhinoForceObject(RUIMeshObject):
 
     def draw_edges(self):
         for edge in self.diagram.edges():
-            if self.diagram.edge_attribute(edge, "is_ind"):
+            if self.diagram.is_dual_edge_ind(edge):
                 self.edgecolor[edge] = self.edgecolor_independent
-            elif self.diagram.edge_attribute(edge, "is_external"):
+            elif self.diagram.is_dual_edge_external(edge):
                 self.edgecolor[edge] = self.edgecolor_external
-            elif self.diagram.edge_attribute(edge, "is_reaction"):
+            elif self.diagram.is_dual_edge_reaction(edge):
                 self.edgecolor[edge] = self.edgecolor_reaction
-            elif self.diagram.edge_attribute(edge, "is_load"):
+            elif self.diagram.is_dual_edge_load(edge):
                 self.edgecolor[edge] = self.edgecolor_load
 
         return super().draw_edges()
