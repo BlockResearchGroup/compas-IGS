@@ -1,6 +1,6 @@
 {
     "icons": {
-        "bitmap": "toolbar.png",
+        "bitmap": "resources/toolbar.png",
         "images": [
             "0_init",
             "1_open",

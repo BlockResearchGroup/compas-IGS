@@ -8,7 +8,7 @@
   "id": "ea785b43-c1c1-43da-b896-69df6c0e4b19",
   "identity": {
     "name": "COMPAS-IGS",
-    "version": "0.2.9-beta",
+    "version": "0.2.10-beta",
     "publisher": {
       "email": "tom.v.mele@gmail.com",
       "name": "Tom Van Mele",
@@ -41,7 +41,7 @@
         "version": "3.*.*"
       },
       "title": "IGS",
-      "uri": "IGS.py"
+      "uri": "commands/IGS.py"
     },
     {
       "id": "f0334dac-553a-4459-837b-2c72cee444db",
@@ -50,7 +50,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_scene_clear",
-      "uri": "IGS_scene_clear.py"
+      "uri": "commands/IGS_scene_clear.py"
     },
     {
       "id": "4d0539cf-06d4-40da-9696-8dcb30d5f270",
@@ -59,7 +59,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_select_fixed",
-      "uri": "IGS_form_select_fixed.py"
+      "uri": "commands/IGS_form_select_fixed.py"
     },
     {
       "id": "aeb2d929-b4ea-4a58-a379-527beaaa9036",
@@ -68,7 +68,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_select_ind",
-      "uri": "IGS_form_select_ind.py"
+      "uri": "commands/IGS_form_select_ind.py"
     },
     {
       "id": "3fe3f8bc-62e5-4b6b-9295-0362b404fc88",
@@ -77,7 +77,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_check_dof",
-      "uri": "IGS_form_check_dof.py"
+      "uri": "commands/IGS_form_check_dof.py"
     },
     {
       "id": "3fcc8475-f029-4596-aad2-6c865d949e70",
@@ -86,7 +86,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_force_from_form",
-      "uri": "IGS_force_from_form.py"
+      "uri": "commands/IGS_force_from_form.py"
     },
     {
       "id": "22844833-f7e1-48a5-91da-7f9e4c0be891",
@@ -95,7 +95,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_move_nodes",
-      "uri": "IGS_form_move_nodes.py"
+      "uri": "commands/IGS_form_move_nodes.py"
     },
     {
       "id": "2adc716d-d616-4f2c-b6c3-77b070ea0fc2",
@@ -104,7 +104,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_force_update",
-      "uri": "IGS_force_update.py"
+      "uri": "commands/IGS_force_update.py"
     },
     {
       "id": "dbed12ee-81b2-4436-8943-b72118ac5619",
@@ -113,7 +113,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_force_move_nodes",
-      "uri": "IGS_force_move_nodes.py"
+      "uri": "commands/IGS_force_move_nodes.py"
     },
     {
       "id": "a003edae-8451-44fb-809c-f7a22e00fd64",
@@ -122,7 +122,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_update_from_force",
-      "uri": "IGS_form_update_from_force.py"
+      "uri": "commands/IGS_form_update_from_force.py"
     },
     {
       "id": "9a9ba83e-1cbd-43d4-bed4-62ccd1b7ee14",
@@ -131,7 +131,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_force_move",
-      "uri": "IGS_force_move.py"
+      "uri": "commands/IGS_force_move.py"
     },
     {
       "id": "42309902-8c76-4278-9823-f78640352e35",
@@ -140,7 +140,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_force_scale",
-      "uri": "IGS_force_scale.py"
+      "uri": "commands/IGS_force_scale.py"
     },
     {
       "id": "2d3fba16-e51b-4951-bd08-d0e801f1afe5",
@@ -149,7 +149,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_force_select_anchor",
-      "uri": "IGS_force_select_anchor.py"
+      "uri": "commands/IGS_force_select_anchor.py"
     },
     {
       "id": "0d1fc5f6-bd02-4a9e-97a5-887b0fa7a178",
@@ -158,7 +158,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_force_select_fixed",
-      "uri": "IGS_force_select_fixed.py"
+      "uri": "commands/IGS_force_select_fixed.py"
     },
     {
       "id": "f3958757-8603-4d59-b4b7-dbd1444a05d3",
@@ -167,7 +167,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_assign_forces",
-      "uri": "IGS_form_assign_forces.py"
+      "uri": "commands/IGS_form_assign_forces.py"
     },
     {
       "id": "f4218054-1037-4f5b-8c39-e67088b64bca",
@@ -176,7 +176,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_compute_loadpath",
-      "uri": "IGS_form_compute_loadpath.py"
+      "uri": "commands/IGS_form_compute_loadpath.py"
     },
     {
       "id": "799defc3-eb24-4b39-9364-810a1bf1f66b",
@@ -185,7 +185,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_constraints_edges",
-      "uri": "IGS_form_constraints_edges.py"
+      "uri": "commands/IGS_form_constraints_edges.py"
     },
     {
       "id": "efc106d6-72ac-464c-8f3b-56d6f4f02cf3",
@@ -194,7 +194,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_constraints_default",
-      "uri": "IGS_form_constraints_default.py"
+      "uri": "commands/IGS_form_constraints_default.py"
     },
     {
       "id": "a21d0611-2baa-45d0-b982-982063c04a05",
@@ -203,7 +203,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_loads",
-      "uri": "IGS_form_loads.py"
+      "uri": "commands/IGS_form_loads.py"
     },
     {
       "id": "af6cf2e9-8dc7-441e-a4cb-db5a2a7d9bcb",
@@ -212,7 +212,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_move",
-      "uri": "IGS_form_move.py"
+      "uri": "commands/IGS_form_move.py"
     },
     {
       "id": "8bd2bed8-84ad-4864-a2d6-1d0131e6c44d",
@@ -221,7 +221,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_update_from_qind",
-      "uri": "IGS_form_update_from_qind.py"
+      "uri": "commands/IGS_form_update_from_qind.py"
     },
     {
       "id": "eb6f2297-a8f4-404e-bec2-d0d1e003b003",
@@ -230,7 +230,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form",
-      "uri": "IGS_form.py"
+      "uri": "commands/IGS_form.py"
     },
     {
       "id": "5cfc9693-1c1b-4c3a-b709-8e6f2952a006",
@@ -239,7 +239,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_scene_redraw",
-      "uri": "IGS_scene_redraw.py"
+      "uri": "commands/IGS_scene_redraw.py"
     },
     {
       "id": "449305f9-fc45-4537-80ac-cbb1cbf9321e",
@@ -248,7 +248,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_session_open",
-      "uri": "IGS_session_open.py"
+      "uri": "commands/IGS_session_open.py"
     },
     {
       "id": "4905cf0e-f801-4bc0-a96f-3e54e28054ec",
@@ -257,7 +257,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_session_redo",
-      "uri": "IGS_session_redo.py"
+      "uri": "commands/IGS_session_redo.py"
     },
     {
       "id": "4aa05fe8-5b36-49c2-938e-a5d6d2f13360",
@@ -266,7 +266,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_session_save",
-      "uri": "IGS_session_save.py"
+      "uri": "commands/IGS_session_save.py"
     },
     {
       "id": "8df6cbdf-5fa2-4430-8a95-e77359ec888e",
@@ -275,7 +275,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_session_undo",
-      "uri": "IGS_session_undo.py"
+      "uri": "commands/IGS_session_undo.py"
     },
     {
       "id": "72791bb4-9a35-4da2-a118-6e96b2c9b2ef",
@@ -284,7 +284,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_settings",
-      "uri": "IGS_settings.py"
+      "uri": "commands/IGS_settings.py"
     },
     {
       "id": "d4a01125-73f4-4540-8027-876969d566c7",
@@ -293,7 +293,7 @@
         "version": "3.*.*"
       },
       "title": "IGS_form_constraints_vertices",
-      "uri": "IGS_form_constraints_vertices.py"
+      "uri": "commands/IGS_form_constraints_vertices.py"
     },
     {
       "id": "c3a15e0c-1156-42e4-941f-68862182731c",
@@ -302,14 +302,14 @@
         "version": "3.*.*"
       },
       "title": "IGS_update_both",
-      "uri": "IGS_update_both.py"
+      "uri": "commands/IGS_update_both.py"
     }
   ],
   "libraries": [
     {
       "type": "uri",
       "library": {
-        "base": "file:///Users/vanmelet/Code/compas-IGS/src/compas_igs/",
+        "base": "src/compas_igs/",
         "language": {
           "id": "*.*.python",
           "version": "3.*.*"
@@ -330,15 +330,15 @@
   "resources": [
     {
       "id": "e3168d3f-e3e0-4da6-b30b-8bf430f3a3b4",
-      "uri": "file:///Users/vanmelet/Code/compas-IGS/resources/splash/styles.css"
+      "uri": "resources/splash/styles.css"
     },
     {
       "id": "7db10690-c5c0-4ccc-9848-d41868fd81e1",
-      "uri": "file:///Users/vanmelet/Code/compas-IGS/resources/splash/compas-IGS.jpg"
+      "uri": "resources/splash/compas-IGS.jpg"
     },
     {
       "id": "8f2660da-7531-4bb3-b990-c7b1ee63d818",
-      "uri": "file:///Users/vanmelet/Code/compas-IGS/resources/splash/index.html"
+      "uri": "resources/splash/index.html"
     }
   ]
 }
