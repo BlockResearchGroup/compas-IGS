@@ -30,111 +30,96 @@
         {
             "name": "IGS_force_from_form",
             "icon": 7,
-            "menu_text": "Create ForceDiagram",
             "tooltip": "Create ForceDiagram"
         },
         {
             "name": "IGS_force_move_nodes",
             "icon": 10,
-            "menu_text": "Move ForceDiagram vertices",
             "tooltip": "Move ForceDiagram vertices"
         },
         {
             "name": "IGS_force_move",
-            "menu_text": "ForceDiagram location",
             "tooltip": "Move ForceDiagram"
         },
         {
             "name": "IGS_force_scale",
-            "menu_text": "ForceDiagram scale",
             "tooltip": "Scale ForceDiagram"
         },
         {
-            "name": "IGS_force_select_anchor",
-            "menu_text": "Select ForceDiagram anchor point"
+            "name": "IGS_force_select_anchor"
         },
         {
             "name": "IGS_force_select_fixed",
-            "menu_text": "Fix Force vertex",
             "tooltip": "Fix Force Vertex in x, y"
         },
         {
             "name": "IGS_force_update",
             "icon": 9,
-            "menu_text": "Update ForceDiagram",
             "tooltip": "Update ForceDiagram from FormDiagram"
         },
         {
             "name": "IGS_form_assign_forces",
-            "icon": 5,
-            "menu_text": "Select and assign forces",
             "tooltip": "Assign forces"
         },
         {
             "name": "IGS_form_check_dof",
             "icon": 6,
-            "menu_text": "Check degree of freedom",
             "tooltip": "Check DoF"
         },
         {
             "name": "IGS_form_compute_loadpath",
             "icon": 17,
-            "menu_text": "Compute loadpath",
             "tooltip": "Compute loadpath"
         },
         {
-            "name": "IGS_form_constraints_vertex",
-            "menu_text": "Assign vertex constraints",
+            "name": "IGS_form_constraints_default",
+            "icon": 12,
+            "tooltip": "Assign default constraints"
+        },
+        {
+            "name": "IGS_form_constraints_edges",
+            "icon": 14,
+            "tooltip": "Assign edge constraints"
+        },
+        {
+            "name": "IGS_form_constraints_vertices",
             "icon": 13,
             "tooltip": "Assign vertex constraints"
         },
         {
-            "name": "IGS_form_default_constraints",
-            "icon": 12,
-            "menu_text": "Assign default constraints",
-            "tooltip": "Assign default constraints"
-        },
-        {
             "name": "IGS_form_loads",
-            "menu_text": "Assign form loads",
+            "icon": 5,
             "tooltip": "Assign loads to the form diagram"
         },
         {
             "name": "IGS_form_move_nodes",
             "icon": 8,
-            "menu_text": "Move Form vertices",
             "tooltip": "Move FormDiagram vertices"
         },
         {
-            "name": "IGS_form_move",
-            "menu_text": "FormDiagram location"
+            "name": "IGS_form_move"
         },
         {
             "name": "IGS_form_select_fixed",
             "icon": 4,
-            "menu_text": "Identify anchors",
             "tooltip": "Identify anchors"
         },
         {
-            "name": "IGS_form_select_ind",
-            "menu_text": "Select independents edges"
+            "name": "IGS_form_select_ind"
         },
         {
             "name": "IGS_form_update_from_force",
             "icon": 11,
-            "menu_text": "Update Form from Force",
             "tooltip": "Update FormDiagram from ForceDiagram"
         },
         {
             "name": "IGS_form_update_from_qind",
             "icon": 11,
-            "menu_text": "Update Form from Q ind",
             "tooltip": "Update FormDiagram from Q ind"
         },
         {
             "name": "IGS_form",
             "icon": 3,
-            "menu_text": "Create FormDiagram",
             "tooltip": "Create FormDiagram"
         },
         {
@@ -149,6 +134,7 @@
         },
         {
             "name": "IGS_session_open",
+            "icon": 1,
             "tooltip": "Load a session"
         },
         {
@@ -157,6 +143,7 @@
         },
         {
             "name": "IGS_session_save",
+            "icon": 2,
             "tooltip": "Save the current session"
         },
         {
@@ -169,25 +156,34 @@
             "tooltip": "Modify the settings"
         },
         {
+            "name": "IGS_update_both",
+            "icon": 15,
+            "tooltip": "Update both diagrams"
+        },
+        {
             "name": "IGS",
+            "icon": 0,
             "tooltip": "Display the IGS window"
         }
     ],
     "menus": [
         {
-            "name": "IGS",
+            "name": "COMPAS-IGS",
             "items": []
         }
     ],
     "toolbars": [
         {
-            "name": "IGS",
+            "name": "COMPAS-IGS",
             "items": [
                 {
-                    "left": "IGS_form"
+                    "left": "IGS"
                 },
                 {
                     "type": "separator"
+                },
+                {
+                    "left": "IGS_form"
                 },
                 {
                     "left": "IGS_form_select_fixed"
@@ -197,9 +193,6 @@
                 },
                 {
                     "left": "IGS_form_check_dof"
-                },
-                {
-                    "type": "separator"
                 },
                 {
                     "left": "IGS_force_from_form"
@@ -214,9 +207,6 @@
                     "left": "IGS_force_update"
                 },
                 {
-                    "type": "separator"
-                },
-                {
                     "left": "IGS_force_move_nodes"
                 },
                 {
@@ -226,16 +216,46 @@
                     "type": "separator"
                 },
                 {
-                    "left": "IGS_form_compute_loadpath"
+                    "left": "IGS_form_constraints_default"
+                },
+                {
+                    "left": "IGS_form_constraints_vertices"
+                },
+                {
+                    "left": "IGS_form_constraints_edges"
+                },
+                {
+                    "type": "separator"
+                },
+                {
+                    "left": "IGS_settings"
+                },
+                {
+                    "left": "IGS_session_undo"
+                },
+                {
+                    "left": "IGS_session_redo"
+                },
+                {
+                    "left": "IGS_scene_redraw"
+                },
+                {
+                    "left": "IGS_scene_clear"
+                },
+                {
+                    "left": "IGS_session_open"
+                },
+                {
+                    "left": "IGS_session_save"
                 }
             ]
         }
     ],
     "toolbargroups": [
         {
-            "name": "IGS",
+            "name": "COMPAS-IGS",
             "toolbars": [
-                "IGS"
+                "COMPAS-IGS"
             ]
         }
     ]
