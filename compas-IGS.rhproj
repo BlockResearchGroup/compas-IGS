@@ -8,7 +8,7 @@
   "id": "ea785b43-c1c1-43da-b896-69df6c0e4b19",
   "identity": {
     "name": "COMPAS-IGS",
-    "version": "0.2.12-beta",
+    "version": "0.2.16-beta",
     "publisher": {
       "email": "tom.v.mele@gmail.com",
       "name": "Tom Van Mele",
@@ -303,6 +303,15 @@
       },
       "title": "IGS_update_both",
       "uri": "commands/IGS_update_both.py"
+    },
+    {
+      "id": "6894f5c1-6822-449c-ac0b-7139d2cca021",
+      "language": {
+        "id": "*.*.python",
+        "version": "3.*.*"
+      },
+      "title": "IGS_form_attributes",
+      "uri": "commands/IGS_form_attributes.py"
     }
   ],
   "libraries": [

@@ -1,29 +1,15 @@
-#! python3
-# venv: brg-csd
-
 import ast
 from typing import Any
-from typing import Type
 
 import Eto.Drawing  # type: ignore
 import Eto.Forms  # type: ignore
 import Rhino  # type: ignore
 import Rhino.UI  # type: ignore
-from pydantic import BaseModel
 
-
-class Attribute(BaseModel):
-    name: str
-    value: Type
-    text: str
-    editable: bool = False
-    expand: bool = False
-    width: int = 0
+from .attribute import Attribute
 
 
 class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
-    """"""
-
     def __init__(
         self,
         attributes: list[Attribute],
@@ -48,6 +34,7 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
 
         self.table = Eto.Forms.GridView()
         self.table.ShowHeader = True
+        self.table.GridLines = Eto.Forms.GridLines.Horizontal
         self.table.CellFormatting += on_cell_formatting
 
         # index column
@@ -103,9 +90,12 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
     @property
     def ok(self):
         self.DefaultButton = Eto.Forms.Button()
-        self.DefaultButton.Text = "OK1"
+        self.DefaultButton.Text = "OK"
         self.DefaultButton.Click += self.on_ok
         return self.DefaultButton
+
+    def on_ok(self, sender, event):
+        self.Close(True)
 
     @property
     def cancel(self):
@@ -114,8 +104,11 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
         self.AbortButton.Click += self.on_cancel
         return self.AbortButton
 
+    def on_cancel(self, sender, event):
+        self.Close(False)
+
     @property
-    def temp(self):
+    def edgedata(self):
         edges = {}
         for row in self.table.DataStore:
             edge = ast.literal_eval(row.getValue(1))
@@ -124,42 +117,5 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
                 edges[edge][model.name] = ast.literal_eval(row.GetValue(2 + i))
         return edges
 
-    def on_ok(self, sender, event):
-        self.Close(True)
-
-    def on_cancel(self, sender, event):
-        self.Close(False)
-
     def show(self):
         return self.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow)
-
-
-# =============================================================================
-# Main
-# =============================================================================
-
-if __name__ == "__main__":
-    from compas.datastructures import Mesh
-
-    mesh = Mesh.from_meshgrid(10, 10)
-    mesh.update_default_edge_attributes({"q": 1.0, "f": 10, "is_ind": False})
-
-    attributes = [
-        Attribute(name="l", text="L", value=float, width=48),
-        Attribute(name="q", text="Q", value=float, width=48),
-        Attribute(name="f", text="F", value=float, width=48),
-        Attribute(name="is_ind", text="IND", value=bool, width=48),
-    ]
-
-    edges = {}
-    for edge in mesh.edges():
-        edges[edge] = {}
-        for attr in attributes:
-            edges[edge][attr.name] = mesh.edge_attribute(edge, name=attr.name)
-
-    form = EdgeAttributesForm(attributes, edges)
-
-    if form.show():
-        for edge, data in form.temp.items():
-            for attr, value in zip(attributes, data):
-                print(attr.name, value)

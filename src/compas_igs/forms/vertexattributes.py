@@ -1,33 +1,19 @@
-#! python3
-# venv: brg-csd
-
 import ast
 from typing import Any
-from typing import Type
 
 import Eto.Drawing  # type: ignore
 import Eto.Forms  # type: ignore
 import Rhino  # type: ignore
 import Rhino.UI  # type: ignore
-from pydantic import BaseModel
 
-
-class Attribute(BaseModel):
-    name: str
-    value: Type
-    text: str
-    editable: bool = False
-    expand: bool = False
-    width: int = 0
+from .attribute import Attribute
 
 
 class VertexAttributesForm(Eto.Forms.Dialog[bool]):
-    """"""
-
     def __init__(
         self,
         attributes: list[Attribute],
-        vertices: dict[tuple[int, int], Any],
+        vertices: dict[int, Any],
         title: str = "Vertex Attributes",
         width: int = 500,
         height: int = 500,
@@ -48,6 +34,7 @@ class VertexAttributesForm(Eto.Forms.Dialog[bool]):
 
         self.table = Eto.Forms.GridView()
         self.table.ShowHeader = True
+        self.table.GridLines = Eto.Forms.GridLines.Horizontal
         self.table.CellFormatting += on_cell_formatting
 
         # index column
@@ -107,12 +94,18 @@ class VertexAttributesForm(Eto.Forms.Dialog[bool]):
         self.DefaultButton.Click += self.on_ok
         return self.DefaultButton
 
+    def on_ok(self, sender, event):
+        self.Close(True)
+
     @property
     def cancel(self):
         self.AbortButton = Eto.Forms.Button()
         self.AbortButton.Text = "Cancel"
         self.AbortButton.Click += self.on_cancel
         return self.AbortButton
+
+    def on_cancel(self, sender, event):
+        self.Close(False)
 
     @property
     def vertexdata(self):
@@ -124,41 +117,5 @@ class VertexAttributesForm(Eto.Forms.Dialog[bool]):
                 vertices[vertex][model.name] = ast.literal_eval(row.GetValue(2 + i))
         return vertices
 
-    def on_ok(self, sender, event):
-        self.Close(True)
-
-    def on_cancel(self, sender, event):
-        self.Close(False)
-
     def show(self):
         return self.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow)
-
-
-# =============================================================================
-# Main
-# =============================================================================
-
-if __name__ == "__main__":
-    from compas.datastructures import Mesh
-
-    mesh = Mesh.from_meshgrid(10, 10)
-    mesh.update_default_vertex_attributes({"a": 1.0, "b": 10, "c": False})
-
-    attributes = [
-        Attribute(name="a", text="A", value=float, width=48),
-        Attribute(name="b", text="B", value=float, width=48),
-        Attribute(name="c", text="C", value=float, width=48),
-    ]
-
-    vertices = {}
-    for vertex in mesh.vertices():
-        vertices[vertex] = {}
-        for attr in attributes:
-            vertices[vertex][attr.name] = mesh.vertex_attribute(vertex, name=attr.name)
-
-    form = VertexAttributesForm(attributes, vertices)
-
-    if form.show():
-        for vertex, data in form.vertexdata.items():
-            for attr, value in zip(attributes, data):
-                print(attr.name, value)

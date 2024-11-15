@@ -62,6 +62,10 @@
             "tooltip": "Assign forces"
         },
         {
+            "name": "IGS_form_attributes",
+            "tooltip": "Form Diagram Attributes"
+        },
+        {
             "name": "IGS_form_check_dof",
             "icon": 6,
             "tooltip": "Check DoF"
