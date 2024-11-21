@@ -28,6 +28,14 @@
     },
     "commands": [
         {
+            "name": "IGS_check_angles",
+            "tooltip": "Check angle deviations"
+        },
+        {
+            "name": "IGS_check_equilibrium",
+            "tooltip": "Check equilibrium"
+        },
+        {
             "name": "IGS_force_from_form",
             "icon": 7,
             "tooltip": "Create ForceDiagram"
@@ -170,12 +178,7 @@
             "tooltip": "Display the IGS window"
         }
     ],
-    "menus": [
-        {
-            "name": "COMPAS-IGS",
-            "items": []
-        }
-    ],
+    "menus": [],
     "toolbars": [
         {
             "name": "COMPAS-IGS",

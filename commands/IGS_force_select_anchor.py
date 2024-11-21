@@ -1,6 +1,6 @@
 #! python3
 # venv: brg-csd
-# r: compas_session>=0.4.5, compas_ags>=1.3.1
+# r: compas_session>=0.4.5, compas_ags>=1.3.2
 
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
@@ -24,6 +24,10 @@ def RunCommand():
     if not force:
         return
 
+    # =============================================================================
+    # Command
+    # =============================================================================
+
     vertex = force.select_anchor()
     if vertex is None:
         return
@@ -36,6 +40,10 @@ def RunCommand():
     rpoint = compas_rhino.objects.get_point_coordinates([guid])[0]
     point = compas_rhino.conversions.point_to_compas(rpoint)
     force.location = point
+
+    # =============================================================================
+    # Update Scene
+    # =============================================================================
 
     rs.UnselectAllObjects()
 

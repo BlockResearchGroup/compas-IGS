@@ -8,7 +8,7 @@
   "id": "ea785b43-c1c1-43da-b896-69df6c0e4b19",
   "identity": {
     "name": "COMPAS-IGS",
-    "version": "0.2.16-beta",
+    "version": "0.2.22-beta",
     "publisher": {
       "email": "tom.v.mele@gmail.com",
       "name": "Tom Van Mele",
@@ -312,6 +312,24 @@
       },
       "title": "IGS_form_attributes",
       "uri": "commands/IGS_form_attributes.py"
+    },
+    {
+      "id": "d9f7c9de-52ab-4475-b828-5b01ed529c17",
+      "language": {
+        "id": "*.*.python",
+        "version": "3.*.*"
+      },
+      "title": "IGS_check_angles",
+      "uri": "commands/IGS_check_angles.py"
+    },
+    {
+      "id": "23902b69-00b4-485a-abf6-db175ed779dd",
+      "language": {
+        "id": "*.*.python",
+        "version": "3.*.*"
+      },
+      "title": "IGS_check_equilibrium",
+      "uri": "commands/IGS_check_equilibrium.py"
     }
   ],
   "libraries": [

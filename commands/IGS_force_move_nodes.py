@@ -1,6 +1,6 @@
 #! python3
 # venv: brg-csd
-# r: compas_session>=0.4.5, compas_ags>=1.3.1
+# r: compas_session>=0.4.5, compas_ags>=1.3.2
 
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
@@ -25,9 +25,13 @@ def RunCommand():
     if not force:
         return
 
+    # =============================================================================
+    # Command
+    # =============================================================================
+
     # include in while loop
 
-    selected = force.select_vertices()
+    selected = force.select_vertices_manual()
     if not selected:
         return
 
@@ -35,26 +39,30 @@ def RunCommand():
         force.redraw()
 
         if session.settings.autoupdate:
-            max_angle = session.settings.ags.max_angle
-            min_force = session.settings.ags.min_force
-
             form_update_from_force(form.diagram, force.diagram)
             form.redraw()
 
-            # compute and check angle deviations
+    # =============================================================================
+    # Check equilibrium
+    # =============================================================================
 
-            compute_angle_deviations(form.diagram, force.diagram, tol_force=min_force)
-            check = check_equilibrium(form.diagram, force.diagram, tol_angle=max_angle, tol_force=min_force)
-            deviation = max(form.diagram.edges_attribute("a"))
+    # max_angle = session.settings.solver.max_angle
+    # min_force = session.settings.solver.min_force
 
-            if check:
-                message = f"Diagrams are parallel!\nMax. angle deviation: {deviation:.2g} deg\nThreshold assumed: {max_angle:.2g} deg."
-            else:
-                message = f"Diagrams are not parallel!\nMax. angle deviation: {deviation:.2g} deg\nThreshold assumed: {max_angle:.2g} deg."
+    # compute_angle_deviations(form.diagram, force.diagram, tol_force=min_force)
+    # check = check_equilibrium(form.diagram, force.diagram, tol_angle=max_angle, tol_force=min_force)
+    # deviation = max(form.diagram.edges_attribute("a"))
 
-            rs.MessageBox(message, title="Info")
+    # if check:
+    #     message = f"Diagrams are parallel!\nMax. angle deviation: {deviation:.2g} deg\nThreshold assumed: {max_angle:.2g} deg."
+    # else:
+    #     message = f"Diagrams are not parallel!\nMax. angle deviation: {deviation:.2g} deg\nThreshold assumed: {max_angle:.2g} deg."
 
-    print(force.show_vertices)
+    # rs.MessageBox(message, title="Info")
+
+    # =============================================================================
+    # Update scene
+    # =============================================================================
 
     session.scene.redraw()
 

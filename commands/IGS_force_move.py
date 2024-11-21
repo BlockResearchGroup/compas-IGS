@@ -1,6 +1,6 @@
 #! python3
 # venv: brg-csd
-# r: compas_session>=0.4.5, compas_ags>=1.3.1
+# r: compas_session>=0.4.5, compas_ags>=1.3.2
 
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
@@ -28,8 +28,7 @@ def RunCommand():
         # move to update_location_from_current_anchorpoint
         vertex_guid = {v: k for k, v in force._guid_vertex.items()}
         guid = vertex_guid[force.anchor]
-        rpoint = compas_rhino.objects.get_point_coordinates([guid])[0]
-        point = compas_rhino.conversions.point_to_compas(rpoint)
+        point = compas_rhino.conversions.pointobject_to_compas(guid)
         force.location = point
 
         force.redraw()

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from compas.geometry import angle_vectors_xy
 from compas.geometry import distance_point_point_xy
 from compas.geometry import subtract_vectors
@@ -28,9 +30,9 @@ def compute_angle_deviations(form: FormDiagram, force: ForceDiagram, tol_force: 
     edges_form = list(form.edges())
     edges_force = force.ordered_edges(form)
 
-    for i in range(len(edges_form)):
-        pt0, pt1 = form.edge_coordinates(edges_form[i][0], edges_form[i][1])
-        _pt0, _pt1 = force.edge_coordinates(edges_force[i][0], edges_force[i][1])
+    for edge_form, edge_force in zip(edges_form, edges_force):
+        pt0, pt1 = form.edge_coordinates(edge_form)
+        _pt0, _pt1 = force.edge_coordinates(edge_force)
 
         a = angle_vectors_xy(subtract_vectors(pt1, pt0), subtract_vectors(_pt1, _pt0), deg=True)
         a = min(a, 180 - a)
@@ -38,7 +40,7 @@ def compute_angle_deviations(form: FormDiagram, force: ForceDiagram, tol_force: 
         if distance_point_point_xy(_pt0, _pt1) < tol_force:
             a = 0.0  # exclude edges with zero-force
 
-        form.edge_attribute(edges_form[i], "a", a)
+        form.edge_attribute(edge_form, "a", a)
 
 
 def check_form_angle_deviations(form: FormDiagram, tol_angle: float = 0.5) -> bool:
@@ -102,7 +104,13 @@ def check_force_length_constraints(force: ForceDiagram, tol_force: float = 0.05)
     return checked
 
 
-def check_equilibrium(form: FormDiagram, force: ForceDiagram, tol_angle: float = 0.5, tol_force: float = 0.05) -> bool:
+def check_equilibrium(
+    form: FormDiagram,
+    force: ForceDiagram,
+    tol_angle: float = 0.5,
+    tol_force: float = 0.05,
+    tol_ldiff: Optional[float] = None,
+) -> bool:
     """Checks if maximum deviations and constraints exceed is below the tolerance.
 
     Parameters
@@ -112,11 +120,11 @@ def check_equilibrium(form: FormDiagram, force: ForceDiagram, tol_angle: float =
     force : :class:`ForceDiagram`
         The force diagram to check equilibrium.
     tol_angle : float, optional
-        Stopping criteria tolerance for angle deviations.
-        The default value is ``0.5``.
+        Maximum angle deviation between reciprocal edges.
     tol_force : float, optional
-        Stopping criteria tolerance for the constraints on the length.
-        The default value is ``0.05``.
+        Smallest magnitude considered nonzero.
+    tol_ldiff : float, optional
+        Maximum difference between force magnitudes and their target values.
 
     Returns
     -------
@@ -124,10 +132,11 @@ def check_equilibrium(form: FormDiagram, force: ForceDiagram, tol_angle: float =
         Return whether of not the diagram passes the check.
 
     """
+    tol_ldiff = tol_force if tol_ldiff is None else tol_ldiff
 
     compute_angle_deviations(form, force, tol_force=tol_force)
     check_form = check_form_angle_deviations(form, tol_angle=tol_angle)
-    check_force = check_force_length_constraints(force, tol_force=tol_force)
+    check_force = check_force_length_constraints(force, tol_force=tol_ldiff)
     checked = check_form and check_force
 
     return checked

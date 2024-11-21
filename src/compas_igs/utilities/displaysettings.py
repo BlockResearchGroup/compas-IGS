@@ -1,4 +1,6 @@
+from compas.geometry import Box
 from compas.geometry import Point
+from compas.geometry import bounding_box
 from compas.geometry import bounding_box_xy
 from compas.geometry import distance_point_point_xy
 from compas_igs.scene import RhinoForceObject
@@ -26,7 +28,7 @@ def compute_force_drawingscale(form: RhinoFormObject, force: RhinoForceObject) -
     return 0.75 * form_diagonal / force_diagonal
 
 
-def compute_force_drawinglocation(form: RhinoFormObject, force: RhinoForceObject) -> Point:
+def compute_force_drawinglocation(form: RhinoFormObject, force: RhinoForceObject, margin: float = 2) -> Point:
     """Compute an appropriate location for the force diagram.
 
     Parameters
@@ -41,18 +43,17 @@ def compute_force_drawinglocation(form: RhinoFormObject, force: RhinoForceObject
     """
     point = force.location.copy()
 
-    form_xyz = list(form.diagram.vertices_attributes("xyz"))
-    force_xyz = list(force.diagram.vertices_attributes("xyz"))
-    form_xmax = max([xyz[0] for xyz in form_xyz])
-    form_xmin = min([xyz[0] for xyz in form_xyz])
-    form_ymin = min([xyz[1] for xyz in form_xyz])
-    force_xmin = min([xyz[0] for xyz in force_xyz])
-    force_ymin = min([xyz[1] for xyz in force_xyz])
+    bbox_form = Box.from_bounding_box(bounding_box(form.diagram.vertices_attributes("xyz")))
+    bbox_force = Box.from_bounding_box(bounding_box(force.diagram.vertices_attributes("xyz")))
 
-    spacing = 0.5 * (form_xmax - form_xmin)
+    y_form = bbox_form.ymin + 0.5 * (bbox_form.ymax - bbox_form.ymin)
+    y_force = bbox_force.ymin + 0.5 * (bbox_force.ymax - bbox_force.ymin)
 
-    point[0] += form_xmax + spacing - force_xmin
-    point[1] += form_ymin - force_ymin
+    dx = margin * (bbox_form.xmax - bbox_form.xmin) + (bbox_form.xmin - bbox_force.xmin)
+    dy = y_form - y_force
+
+    point[0] += dx + (point[0] - bbox_force.xmin)
+    point[1] += dy + (point[1] - bbox_force.ymin)
     return point
 
 

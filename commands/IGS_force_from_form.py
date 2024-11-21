@@ -1,6 +1,6 @@
 #! python3
 # venv: brg-csd
-# r: compas_session>=0.4.5, compas_ags>=1.3.1
+# r: compas_session>=0.4.5, compas_ags>=1.3.2
 
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
@@ -70,11 +70,13 @@ def RunCommand():
 
     drawingscale = compute_force_drawingscale(form, force)  # scale factor for the diagram
     drawinglocation = compute_force_drawinglocation(form, force)  # translation of the diagram
-
-    # forcescale = compute_form_forcescale(form)  # thickness
+    forcescale = compute_form_forcescale(form)  # thickness
 
     force.scale = drawingscale
     force.location = drawinglocation
+    form.scale_internal_forcepipes = forcescale
+
+    form.show_internal_forcepipes = True
 
     session.scene.redraw()
 

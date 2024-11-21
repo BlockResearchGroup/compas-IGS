@@ -212,14 +212,17 @@ class RhinoForceObject(RUIMeshObject):
         edges = list(self.mesh.edges())
 
         def OnDynamicDraw(sender, e):
-            current = e.CurrentPoint
-            vector = current - start
-            for vertex in vertex_p1:
-                vertex_p1[vertex] = vertex_p0[vertex] + vector
-            for u, v in iter(edges):
-                sp = vertex[u]
-                ep = vertex[v]
-                e.Display.DrawDottedLine(sp, ep, color)
+            try:
+                current = e.CurrentPoint
+                vector = current - start
+                for vertex in vertex_p1:
+                    vertex_p1[vertex] = vertex_p0[vertex] + vector
+                for u, v in iter(edges):
+                    sp = vertex[u]
+                    ep = vertex[v]
+                    e.Display.DrawDottedLine(sp, ep, color)
+            except Exception as e:
+                print(e)
 
         gp = Rhino.Input.Custom.GetPoint()
 

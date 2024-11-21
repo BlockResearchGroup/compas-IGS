@@ -5,6 +5,7 @@
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
 from compas_igs.session import IGSSession
+from compas_igs.utilities import check_equilibrium
 
 # =============================================================================
 # Command
@@ -22,12 +23,26 @@ def RunCommand():
     if not force:
         return
 
-    raise NotImplementedError
+    max_angle = session.settings.solver.max_angle
+    min_force = session.settings.solver.min_force
+    max_ldiff = session.settings.solver.max_ldiff
 
-    rs.UnselectAllObjects()
+    result = check_equilibrium(
+        form.diagram,
+        force.diagram,
+        tol_angle=max_angle,
+        tol_force=min_force,
+        tol_ldiff=max_ldiff,
+    )
 
-    if session.settings.autosave:
-        session.record(name="Force Scale")
+    # max_dev = max(form.diagram.edges_attribute("a"))
+
+    if not result:
+        message = "Diagrams ARE NOT in equilibrium."
+    else:
+        message = "Diagrams ARE in equilibrium."
+
+    rs.MessageBox(message)
 
 
 # =============================================================================

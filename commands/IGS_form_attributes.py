@@ -1,6 +1,6 @@
 #! python3
 # venv: brg-csd
-# r: compas_session>=0.4.5, compas_ags>=1.3.1
+# r: compas_session>=0.4.5, compas_ags>=1.3.2
 
 import rhinoscriptsyntax as rs  # type: ignore
 
@@ -51,9 +51,9 @@ def RunCommand():
 
     elif option == "EdgeAttributes":
         attributes = [
-            Attribute(name="l", text="L", value=float, width=48, editable=False),
-            Attribute(name="q", text="Q", value=float, width=48, editable=False),
-            Attribute(name="f", text="F", value=float, width=48, editable=False),
+            Attribute(name="l", text="L", value=float, width=64, editable=False),
+            Attribute(name="q", text="Q", value=float, width=64, editable=False),
+            Attribute(name="f", text="F", value=float, width=64, editable=False),
             Attribute(name="is_ind", text="IND", value=bool, width=48, editable=False),
         ]
 

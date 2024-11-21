@@ -71,7 +71,8 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
         for index, edge in enumerate(edges):
             values = [repr(index), repr(edge)]
             for model in self.attributes:
-                values.append(repr(edges[edge][model.name]))
+                value = edges[edge][model.name]
+                values.append(repr(value))
             row = Eto.Forms.GridItem()
             row.Values = values
             rows.append(row)

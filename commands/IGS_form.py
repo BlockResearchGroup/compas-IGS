@@ -1,13 +1,16 @@
 #! python3
 # venv: brg-csd
-# r: compas_session>=0.4.5, compas_ags>=1.3.1
+# r: compas_session>=0.4.5, compas_ags>=1.3.2
+
+import pathlib
 
 import rhinoscriptsyntax as rs  # type: ignore
 
-from compas_igs.commands.form import create_from_lines
-from compas_igs.commands.form import create_from_meshgrid
-from compas_igs.commands.form import create_from_obj
+import compas_rhino.objects
+from compas_ags.diagrams import FormDiagram
+from compas_ags.diagrams import FormGraph
 from compas_igs.session import IGSSession
+from compas_rui.forms import FileForm
 
 # =============================================================================
 # Command
@@ -27,18 +30,50 @@ def RunCommand():
     # Create form diagram
     # =============================================================================
 
-    option = rs.GetString(message="FormDiagram From", strings=["RhinoLines", "MeshGrid", "OBJ"])
+    option = rs.GetString(message="FormDiagram From", strings=["RhinoLines", "OBJ"])
     if not option:
         return
 
     if option == "RhinoLines":
-        formdiagram = create_from_lines()
+        guids = compas_rhino.objects.select_lines()
+        if not guids:
+            return
 
-    elif option == "MeshGrid":
-        formdiagram = create_from_meshgrid()
+        lines = compas_rhino.objects.get_line_coordinates(guids)
+        graph = FormGraph.from_lines(lines)
+
+        if not graph.is_planar_embedding():
+            return rs.MessageBox(
+                message="The graph is not planar. Therefore, a form diagram cannot be created.",
+                title="Create FormDiagram Error",
+            )
+
+        formdiagram = FormDiagram.from_graph(graph)
 
     elif option == "OBJ":
-        formdiagram = create_from_obj(session.basedir)
+        filepath = FileForm.open(session.basedir)
+        if not filepath:
+            return
+
+        filepath = pathlib.Path(filepath)
+        if not filepath.suffix == ".obj":
+            return rs.MessageBox(
+                message="The file is not an OBJ file.",
+                title="Error FormDiagram",
+            )
+
+        graph = FormGraph.from_obj(filepath)
+
+        if not graph.is_planar_embedding():
+            return rs.MessageBox(
+                message="The graph is not planar. Therefore, a form diagram cannot be created.",
+                title="Create FormDiagram Error",
+            )
+
+        formdiagram = FormDiagram.from_graph(graph)
+
+    elif option == "MeshGrid":
+        raise NotImplementedError
 
     else:
         raise NotImplementedError

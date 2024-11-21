@@ -1,14 +1,21 @@
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
+import scriptcontext as sc  # type: ignore  # noqa: F401
 
+import compas_rhino.conversions
+import compas_rhino.objects
 from compas.colors import Color
+from compas.geometry import Cylinder
 from compas.scene.descriptors.color import ColorAttribute
 from compas.scene.descriptors.colordict import ColorDictAttribute
 from compas_ags.diagrams import FormDiagram
 from compas_igs.forms import EdgeForcesForm
+from compas_igs.session import IGSSession
 from compas_rui.scene import RUIMeshObject
 
 
 class RhinoFormObject(RUIMeshObject):
+    session = IGSSession()
+
     vertexcolor = ColorDictAttribute(default=Color.black())
     vertexcolor_fixed = ColorAttribute(Color.red())
     vertexcolor_lineconstraint = ColorAttribute(Color.white())
@@ -40,6 +47,17 @@ class RhinoFormObject(RUIMeshObject):
         self.show_edges = True
         self.show_vertices = True
 
+        self.show_external_forcelabels = False
+
+        self.show_internal_forcepipes = False
+        self.scale_internal_forcepipes = 1.0
+        self.tol_internal_forcepipes = 1e-3
+        self.internal_forcepipes_group = None
+        self._guids_internal_forcepipes = []
+
+        self.show_angles = False
+        self._guids_angles = []
+
     @property
     def diagram(self) -> FormDiagram:
         return self.mesh
@@ -53,11 +71,13 @@ class RhinoFormObject(RUIMeshObject):
     # =============================================================================
 
     def draw(self):
-        # for vertex in self.diagram.vertices():
-        #     if self.diagram.vertex_attribute(vertex, "is_fixed"):
-        #         self.vertexcolor[vertex] = self.vertexcolor_fixed
-
         super().draw()
+
+        if self.show_angles:
+            self.draw_angles()
+
+        if self.show_internal_forcepipes:
+            self.draw_internal_forcepipes()
 
         return self.guids
 
@@ -83,9 +103,79 @@ class RhinoFormObject(RUIMeshObject):
 
         return super().draw_edges()
 
+    def draw_angles(self):
+        guids = []
+        self._guids_angles = guids
+        self._guids += guids
+        return guids
+
+    def draw_internal_forcepipes(self):
+        guids = []
+
+        scale = self.scale_internal_forcepipes
+        tol = self.tol_internal_forcepipes
+
+        color_compression = Color.blue()
+        color_tension = Color.red()
+
+        for edge in self.diagram.edges_where(is_external=False):
+            force = self.diagram.edge_force(edge)
+
+            if force != 0:
+                color = color_compression if force < 0 else color_tension
+                line = self.diagram.edge_line(edge)
+                radius = abs(force) * scale
+
+                if radius > tol:
+                    pipe = Cylinder.from_line_and_radius(line, radius)
+                    name = "{}.edge.{}.force".format(self.diagram.name, edge)
+                    attr = self.compile_attributes(name=name, color=color)
+                    guid = sc.doc.Objects.AddBrep(compas_rhino.conversions.cylinder_to_rhino_brep(pipe), attr)
+                    guids.append(guid)
+
+        if guids:
+            if self.internal_forcepipes_group:
+                self.add_to_group(self.internal_forcepipes_group, guids)
+            elif self.group:
+                self.add_to_group(self.group, guids)
+
+        self._guids_internal_forcepipes = guids
+        self._guids += guids
+        return guids
+
+    def draw_independent_labels(self):
+        pass
+
+    def draw_external_labels(self):
+        pass
+
+    # =============================================================================
+    # Clear
+    # =============================================================================
+
+    def clear(self):
+        super().clear()
+        self.clear_angles()
+        self.clear_internal_forcepipes()
+
+    def clear_angles(self):
+        compas_rhino.objects.delete_objects(self._guids_angles, purge=True)
+        self._guids_angles = []
+
+    def clear_internal_forcepipes(self):
+        compas_rhino.objects.delete_objects(self._guids_internal_forcepipes, purge=True)
+        self._guids_internal_forcepipes = []
+
     # =============================================================================
     # Redraw
     # =============================================================================
+
+    def redraw(self):
+        rs.EnableRedraw(False)
+        self.clear()
+        self.draw()
+        rs.EnableRedraw(True)
+        rs.Redraw()
 
     def redraw_vertices(self):
         rs.EnableRedraw(False)
@@ -101,12 +191,10 @@ class RhinoFormObject(RUIMeshObject):
         rs.EnableRedraw(True)
         rs.Redraw()
 
-    def redraw(self):
+    def redraw_internal_forcepipes(self):
         rs.EnableRedraw(False)
-        self.clear_vertices()
-        self.draw_vertices()
-        self.clear_edges()
-        self.draw_edges()
+        self.clear_internal_forcepipes()
+        self.draw_internal_forcepipes()
         rs.EnableRedraw(True)
         rs.Redraw()
 
@@ -115,10 +203,7 @@ class RhinoFormObject(RUIMeshObject):
     # =============================================================================
 
     def select_fixed_vertices(self):
-        # self.show_vertices = list(self.diagram.vertices())
-        # self.redraw_vertices()
-
-        selected = self.select_vertices(message="Select ALL fixed vertices (others will be unfixed).")
+        selected = self.select_vertices_manual(message="Select ALL fixed vertices (others will be unfixed).")
         if selected:
             self.diagram.vertices_attribute(name="is_fixed", value=False)
             self.diagram.vertices_attribute(name="is_fixed", value=True, keys=selected)
@@ -126,10 +211,7 @@ class RhinoFormObject(RUIMeshObject):
         return selected
 
     def select_independent_edges(self):
-        # self.show_edges = list(self.diagram.edges_where(_is_edge=True))
-        # self.redraw_edges()
-
-        selected = self.select_edges(message="Select ALL independent edges.")
+        selected = self.select_edges_manual(message="Select ALL independent edges.")
         if selected:
             self.diagram.edges_attribute(name="is_ind", value=False)
             self.diagram.edges_attribute(name="is_ind", value=True, keys=selected)
@@ -154,4 +236,7 @@ class RhinoFormObject(RUIMeshObject):
         if form.show():
             for row in form.rows:
                 index, edge, force = row
+                length = self.diagram.edge_length(edge)
+                fd = force / length
                 self.diagram.edge_attribute(edge, name="f", value=force)
+                self.diagram.edge_attribute(edge, name="q", value=fd)

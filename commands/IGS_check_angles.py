@@ -5,6 +5,7 @@
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
 from compas_igs.session import IGSSession
+from compas_igs.utilities import compute_angle_deviations
 
 # =============================================================================
 # Command
@@ -22,12 +23,20 @@ def RunCommand():
     if not force:
         return
 
-    raise NotImplementedError
+    max_angle = session.settings.solver.max_angle
+    min_force = session.settings.solver.min_force
 
-    rs.UnselectAllObjects()
+    compute_angle_deviations(form.diagram, force.diagram, tol_force=min_force)
 
-    if session.settings.autosave:
-        session.record(name="Force Scale")
+    max_dev = max(form.diagram.edges_attribute("a"))
+    result = max_dev <= max_angle
+
+    if not result:
+        message = f"Diagrams ARE NOT parallel: {max_dev} > {max_angle}"
+    else:
+        message = f"Diagrams ARE parallel: {max_dev} <= {max_angle}"
+
+    rs.MessageBox(message)
 
 
 # =============================================================================
