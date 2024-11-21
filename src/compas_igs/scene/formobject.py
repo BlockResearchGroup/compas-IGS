@@ -47,16 +47,7 @@ class RhinoFormObject(RUIMeshObject):
         self.show_edges = True
         self.show_vertices = True
 
-        self.show_external_forcelabels = False
-
-        self.show_internal_forcepipes = False
-        self.scale_internal_forcepipes = 1.0
-        self.tol_internal_forcepipes = 1e-3
-        self.internal_forcepipes_group = None
-        self._guids_internal_forcepipes = []
-
-        self.show_angles = False
-        self._guids_angles = []
+        self._guids_internal_force_pipes = []
 
     @property
     def diagram(self) -> FormDiagram:
@@ -73,11 +64,14 @@ class RhinoFormObject(RUIMeshObject):
     def draw(self):
         super().draw()
 
-        if self.show_angles:
-            self.draw_angles()
+        if self.session.get("equilibrium", False):
+            if self.session.settings.form.show_internal_force_pipes:
+                self.draw_internal_force_pipes()
 
-        if self.show_internal_forcepipes:
-            self.draw_internal_forcepipes()
+        if self.session.settings.form.show_external_force_labels:
+            self.draw_external_force_labels()
+        elif self.session.settings.form.show_independent_edge_labels:
+            self.draw_independent_edge_labels()
 
         return self.guids
 
@@ -100,20 +94,26 @@ class RhinoFormObject(RUIMeshObject):
                 self.edgecolor[edge] = self.edgecolor_reaction
             elif self.diagram.edge_attribute(edge, "is_load"):
                 self.edgecolor[edge] = self.edgecolor_load
+            else:
+                if self.session.get("equilibrium", False):
+                    force = self.diagram.edge_attribute(edge, "f")
+
+                    if force > 0:
+                        self.edgecolor[edge] = self.tensioncolor
+                    elif force < 0:
+                        self.edgecolor[edge] = self.compressioncolor
+                    else:
+                        self.edgecolor[edge] = self.edgecolor.default
+                else:
+                    self.edgecolor[edge] = self.edgecolor.default
 
         return super().draw_edges()
 
-    def draw_angles(self):
-        guids = []
-        self._guids_angles = guids
-        self._guids += guids
-        return guids
-
-    def draw_internal_forcepipes(self):
+    def draw_internal_force_pipes(self):
         guids = []
 
-        scale = self.scale_internal_forcepipes
-        tol = self.tol_internal_forcepipes
+        scale = self.session.settings.form.scale_internal_force_pipes
+        tol = self.session.settings.form.tol_internal_force_pipes
 
         color_compression = Color.blue()
         color_tension = Color.red()
@@ -133,21 +133,28 @@ class RhinoFormObject(RUIMeshObject):
                     guid = sc.doc.Objects.AddBrep(compas_rhino.conversions.cylinder_to_rhino_brep(pipe), attr)
                     guids.append(guid)
 
-        if guids:
-            if self.internal_forcepipes_group:
-                self.add_to_group(self.internal_forcepipes_group, guids)
-            elif self.group:
-                self.add_to_group(self.group, guids)
+        if guids and self.group:
+            self.add_to_group(self.group, guids)
 
-        self._guids_internal_forcepipes = guids
+        self._guids_internal_force_pipes = guids
         self._guids += guids
         return guids
 
-    def draw_independent_labels(self):
-        pass
+    def draw_independent_edge_labels(self):
+        text = {}
+        for edge in self.diagram.edges_where({"is_ind": True}):
+            force = self.diagram.edge_attribute(edge, "f")
+            text[edge] = f"{force:.1f}"
 
-    def draw_external_labels(self):
-        pass
+        return self.draw_edgelabels(text=text)
+
+    def draw_external_force_labels(self):
+        text = {}
+        for edge in self.diagram.edges_where({"is_external": True}):
+            force = self.diagram.edge_attribute(edge, "f")
+            text[edge] = f"{force:.1f}"
+
+        return self.draw_edgelabels(text=text)
 
     # =============================================================================
     # Clear
@@ -155,16 +162,11 @@ class RhinoFormObject(RUIMeshObject):
 
     def clear(self):
         super().clear()
-        self.clear_angles()
-        self.clear_internal_forcepipes()
+        self.clear_internal_force_pipes()
 
-    def clear_angles(self):
-        compas_rhino.objects.delete_objects(self._guids_angles, purge=True)
-        self._guids_angles = []
-
-    def clear_internal_forcepipes(self):
-        compas_rhino.objects.delete_objects(self._guids_internal_forcepipes, purge=True)
-        self._guids_internal_forcepipes = []
+    def clear_internal_force_pipes(self):
+        compas_rhino.objects.delete_objects(self._guids_internal_force_pipes, purge=True)
+        self._guids_internal_force_pipes = []
 
     # =============================================================================
     # Redraw
@@ -191,10 +193,10 @@ class RhinoFormObject(RUIMeshObject):
         rs.EnableRedraw(True)
         rs.Redraw()
 
-    def redraw_internal_forcepipes(self):
+    def redraw_internal_force_pipes(self):
         rs.EnableRedraw(False)
-        self.clear_internal_forcepipes()
-        self.draw_internal_forcepipes()
+        self.clear_internal_force_pipes()
+        self.draw_internal_force_pipes()
         rs.EnableRedraw(True)
         rs.Redraw()
 
@@ -226,6 +228,11 @@ class RhinoFormObject(RUIMeshObject):
         edges = list(self.diagram.edges_where(is_ind=True))
         if not edges:
             return rs.MessageBox(message="Please identify the independent edges first.")
+
+        if hasattr(self, "_guids_edgelabels"):
+            compas_rhino.objects.delete_objects(self._guids_edgelabels, purge=True)
+            self._guids_edgelabels = []
+            rs.Redraw()
 
         self.draw_edgelabels(text={edge: index for index, edge in enumerate(edges)}, color=self.edgecolor)
         rs.Redraw()

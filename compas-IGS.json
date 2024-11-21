@@ -94,6 +94,10 @@
             "tooltip": "Assign edge constraints"
         },
         {
+            "name": "IGS_form_constraints_remove",
+            "tooltip": "Remove all constraints"
+        },
+        {
             "name": "IGS_form_constraints_vertices",
             "icon": 13,
             "tooltip": "Assign vertex constraints"

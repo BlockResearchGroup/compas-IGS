@@ -26,6 +26,7 @@ def RunCommand():
         return
 
     rs.UnselectAllObjects()
+
     form.assign_forces()
 
     # =============================================================================
@@ -33,6 +34,10 @@ def RunCommand():
     # =============================================================================
 
     rs.UnselectAllObjects()
+
+    session.set("equilibrium", False)
+    session.settings.form.show_external_force_labels = False
+    session.settings.form.show_independent_edge_labels = True
 
     session.scene.redraw()
 

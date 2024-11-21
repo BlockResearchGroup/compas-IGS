@@ -24,7 +24,40 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
             if not e.Column.Editable:
                 e.ForegroundColor = Eto.Drawing.Colors.Gray
 
+            is_external = False
+            is_ind = False
+            is_compression = False
+            is_tension = False
+
+            for index, model in enumerate(self.attributes):
+                value = e.Item.GetValue(index + 2)
+                value = ast.literal_eval(value)
+
+                if model.name == "f":
+                    is_compression = value < 0
+                    is_tension = value > 0
+
+                elif model.name == "is_external":
+                    is_external = value
+
+                elif model.name == "is_ind":
+                    is_ind = value
+
+            if is_ind:
+                e.BackgroundColor = Eto.Drawing.Colors.Cyan
+                e.ForegroundColor = Eto.Drawing.Colors.White
+            elif is_external:
+                e.BackgroundColor = Eto.Drawing.Colors.Green
+                e.ForegroundColor = Eto.Drawing.Colors.White
+            elif is_compression:
+                e.BackgroundColor = Eto.Drawing.Colors.Blue
+                e.ForegroundColor = Eto.Drawing.Colors.White
+            elif is_tension:
+                e.BackgroundColor = Eto.Drawing.Colors.Red
+                e.ForegroundColor = Eto.Drawing.Colors.White
+
         self.attributes = attributes
+        self.edges = edges
 
         self.Title = title
         self.Padding = Eto.Drawing.Padding(0)
@@ -68,10 +101,12 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
 
         # edge data rows
         rows = []
-        for index, edge in enumerate(edges):
+        for index, edge in enumerate(self.edges):
             values = [repr(index), repr(edge)]
             for model in self.attributes:
-                value = edges[edge][model.name]
+                value = self.edges[edge][model.name]
+                if not model.editable and model.value is float:
+                    value = round(value, 3)
                 values.append(repr(value))
             row = Eto.Forms.GridItem()
             row.Values = values
@@ -115,7 +150,10 @@ class EdgeAttributesForm(Eto.Forms.Dialog[bool]):
             edge = ast.literal_eval(row.getValue(1))
             edges[edge] = {}
             for i, model in enumerate(self.attributes):
-                edges[edge][model.name] = ast.literal_eval(row.GetValue(2 + i))
+                if model.editable:
+                    edges[edge][model.name] = ast.literal_eval(row.GetValue(2 + i))
+                else:
+                    edges[edge][model.name] = self.edges[edge][model.name]
         return edges
 
     def show(self):

@@ -13,7 +13,13 @@ class SolverSettings(BaseModel):
 
 
 class FormDiagramSettings(BaseModel):
-    pass
+    show_independent_edge_labels: bool = False
+    show_external_force_labels: bool = False
+    show_internal_force_pipes: bool = False
+
+    scale_internal_force_pipes: float = 1.0
+
+    tol_internal_force_pipes: float = 1e-3
 
 
 class ForceDiagramSettings(BaseModel):

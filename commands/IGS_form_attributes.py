@@ -4,6 +4,7 @@
 
 import rhinoscriptsyntax as rs  # type: ignore
 
+import compas_rhino.objects
 from compas_igs.forms import Attribute
 from compas_igs.forms import EdgeAttributesForm
 from compas_igs.forms import VertexAttributesForm
@@ -31,12 +32,10 @@ def RunCommand():
 
     if option == "VertexAttributes":
         attributes = [
-            Attribute(name="x", text="X", value=float, width=48, editable=False),
-            Attribute(name="y", text="Y", value=float, width=48, editable=False),
-            Attribute(name="z", text="Z", value=float, width=48, editable=False),
-            Attribute(name="is_fixed", text="FIXED", value=bool, width=48, editable=False),
-            Attribute(name="cx", text="CX", value=float, width=48, editable=False),
-            Attribute(name="cy", text="CY", value=float, width=48, editable=False),
+            Attribute(name="x", text="X", value=float, width=64, editable=False),
+            Attribute(name="y", text="Y", value=float, width=64, editable=False),
+            Attribute(name="z", text="Z", value=float, width=64, editable=False),
+            Attribute(name="is_fixed", text="Fixed", value=bool, width=48, editable=False),
         ]
 
         vertices = {}
@@ -52,9 +51,9 @@ def RunCommand():
     elif option == "EdgeAttributes":
         attributes = [
             Attribute(name="l", text="L", value=float, width=64, editable=False),
-            Attribute(name="q", text="Q", value=float, width=64, editable=False),
             Attribute(name="f", text="F", value=float, width=64, editable=False),
-            Attribute(name="is_ind", text="IND", value=bool, width=48, editable=False),
+            Attribute(name="is_external", text="Ext", value=bool, width=48, editable=False),
+            Attribute(name="is_ind", text="Ind", value=bool, width=48, editable=False),
         ]
 
         edges = {}
@@ -63,6 +62,14 @@ def RunCommand():
             for attr in attributes:
                 edges[edge][attr.name] = form.diagram.edge_attribute(edge, name=attr.name)
 
+        if hasattr(form, "_guids_edgelabels"):
+            compas_rhino.objects.delete_objects(form._guids_edgelabels, purge=True)
+            form._guids_edgelabels = []
+            rs.Redraw()
+
+        form.draw_edgelabels(text={edge: index for index, edge in enumerate(edges)})
+        rs.Redraw()
+
         form = EdgeAttributesForm(attributes, edges)
         if form.show():
             pass
@@ -70,6 +77,10 @@ def RunCommand():
     # =============================================================================
     # Update scene
     # =============================================================================
+
+    rs.UnselectAllObjects()
+
+    session.scene.redraw()
 
     # if session.settings.autosave:
     #     session.record(name="Form Attributes")

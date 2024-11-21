@@ -3,6 +3,7 @@ from compas.geometry import Point
 from compas.geometry import bounding_box
 from compas.geometry import bounding_box_xy
 from compas.geometry import distance_point_point_xy
+from compas.geometry import transform_points
 from compas_igs.scene import RhinoForceObject
 from compas_igs.scene import RhinoFormObject
 
@@ -28,7 +29,7 @@ def compute_force_drawingscale(form: RhinoFormObject, force: RhinoForceObject) -
     return 0.75 * form_diagonal / force_diagonal
 
 
-def compute_force_drawinglocation(form: RhinoFormObject, force: RhinoForceObject, margin: float = 2) -> Point:
+def compute_force_drawinglocation(form: RhinoFormObject, force: RhinoForceObject, margin: float = 1.3) -> Point:
     """Compute an appropriate location for the force diagram.
 
     Parameters
@@ -41,10 +42,14 @@ def compute_force_drawinglocation(form: RhinoFormObject, force: RhinoForceObject
     :class:`compas.geometry.Point`
 
     """
-    point = force.location.copy()
+    location = force.location.copy()
+    transformation = force.transformation
 
-    bbox_form = Box.from_bounding_box(bounding_box(form.diagram.vertices_attributes("xyz")))
-    bbox_force = Box.from_bounding_box(bounding_box(force.diagram.vertices_attributes("xyz")))
+    points_form = form.diagram.vertices_attributes("xyz")
+    points_force = transform_points(force.diagram.vertices_attributes("xyz"), transformation)
+
+    bbox_form = Box.from_bounding_box(bounding_box(points_form))
+    bbox_force = Box.from_bounding_box(bounding_box(points_force))
 
     y_form = bbox_form.ymin + 0.5 * (bbox_form.ymax - bbox_form.ymin)
     y_force = bbox_force.ymin + 0.5 * (bbox_force.ymax - bbox_force.ymin)
@@ -52,13 +57,14 @@ def compute_force_drawinglocation(form: RhinoFormObject, force: RhinoForceObject
     dx = margin * (bbox_form.xmax - bbox_form.xmin) + (bbox_form.xmin - bbox_force.xmin)
     dy = y_form - y_force
 
-    point[0] += dx + (point[0] - bbox_force.xmin)
-    point[1] += dy + (point[1] - bbox_force.ymin)
-    return point
+    location[0] += dx
+    location[1] += dy
+    return location
 
 
 def compute_form_forcescale(form: RhinoFormObject) -> float:
-    """Calculate an appropriate scale to the thickness of the forces in the form diagram.
+    """Calculate an appropriate scale to the thickness of the force pipes in the form diagram.
+    This IS NOT the scale of the force diagram.
 
     Parameters
     ----------

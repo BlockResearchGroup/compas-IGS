@@ -28,9 +28,6 @@ def RunCommand():
 
     force = session.find_forcediagram(warn=False)
     if force:
-        if not session.confirm("This will replace the existing ForceDiagram. Do you want to proceed?"):
-            return
-
         force.clear()
         session.scene.remove(force)
 
@@ -68,15 +65,13 @@ def RunCommand():
 
     force: RhinoForceObject = session.scene.add(forcediagram)
 
-    drawingscale = compute_force_drawingscale(form, force)  # scale factor for the diagram
-    drawinglocation = compute_force_drawinglocation(form, force)  # translation of the diagram
-    forcescale = compute_form_forcescale(form)  # thickness
+    force.scale = compute_force_drawingscale(form, force)  # scale factor for the diagram
+    force.location = compute_force_drawinglocation(form, force)  # translation of the diagram
 
-    force.scale = drawingscale
-    force.location = drawinglocation
-    form.scale_internal_forcepipes = forcescale
+    session.settings.form.scale_internal_force_pipes = compute_form_forcescale(form)  # thickness
+    session.settings.form.show_external_force_labels = True
 
-    form.show_internal_forcepipes = True
+    session.set("equilibrium", True)
 
     session.scene.redraw()
 

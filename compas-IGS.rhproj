@@ -8,7 +8,7 @@
   "id": "ea785b43-c1c1-43da-b896-69df6c0e4b19",
   "identity": {
     "name": "COMPAS-IGS",
-    "version": "0.2.22-beta",
+    "version": "0.2.36-beta",
     "publisher": {
       "email": "tom.v.mele@gmail.com",
       "name": "Tom Van Mele",
@@ -330,6 +330,15 @@
       },
       "title": "IGS_check_equilibrium",
       "uri": "commands/IGS_check_equilibrium.py"
+    },
+    {
+      "id": "513c90d9-5169-40c2-837c-4e5fe69e2e1e",
+      "language": {
+        "id": "*.*.python",
+        "version": "3.*.*"
+      },
+      "title": "IGS_form_constraints_remove",
+      "uri": "commands/IGS_form_constraints_remove.py"
     }
   ],
   "libraries": [

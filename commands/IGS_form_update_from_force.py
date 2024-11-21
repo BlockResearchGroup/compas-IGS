@@ -4,6 +4,7 @@
 
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
+from compas_ags.ags import force_update_from_form
 from compas_ags.ags import form_update_from_force
 from compas_igs.session import IGSSession
 from compas_igs.utilities import check_equilibrium
@@ -29,6 +30,11 @@ def RunCommand():
     # =============================================================================
 
     form_update_from_force(form.diagram, force.diagram)
+    force_update_from_form(force.diagram, form.diagram)
+
+    # =============================================================================
+    # Check equilibrium
+    # =============================================================================
 
     max_angle = session.settings.solver.max_angle
     min_force = session.settings.solver.min_force
@@ -42,18 +48,16 @@ def RunCommand():
         tol_ldiff=max_ldiff,
     )
 
-    if not result:
-        message = "Diagrams ARE NOT in equilibrium."
-        rs.MessageBox(message)
-
-        # control through settings
-        form.show_internal_forcepipes = False
-        form.show_external_labels = False
+    if result:
+        session.set("equilibrium", True)
+        session.settings.form.show_external_force_labels = True
 
     else:
-        # control through settings
-        form.show_internal_forcepipes = True
-        form.show_external_labels = True
+        print("The diagrams ARE NOT in equilibrium.")
+
+        session.set("equilibrium", False)
+        session.settings.form.show_external_force_labels = False
+        session.settings.form.show_independent_edge_labels = True
 
     # =============================================================================
     # Update scene

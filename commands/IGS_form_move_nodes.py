@@ -7,6 +7,7 @@ import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 from compas_ags.ags import force_update_from_form
 from compas_ags.ags import form_update_q_from_qind
 from compas_igs.session import IGSSession
+from compas_igs.utilities import check_equilibrium
 
 # =============================================================================
 # Command
@@ -28,18 +29,16 @@ def RunCommand():
     # Command
     # =============================================================================
 
-    # include in while loop
-
-    # selectable = set(form.diagram.vertices_where(is_fixed=False))
-    # temp = set(form.select_vertices())
-    # selected = list(selectable & temp)
-
     selected = form.select_vertices_manual()
-
     if not selected:
         return
 
     if form.move_vertices(selected):
+        for edge in form.diagram.edges_where({"is_ind": True}):
+            force = form.diagram.edge_attribute(edge, "f")
+            length = form.diagram.edge_length(edge)
+            form.diagram.edge_attribute(edge, "q", force / length)
+
         form.redraw()
 
         if session.settings.autoupdate:
@@ -48,12 +47,35 @@ def RunCommand():
             force.redraw()
 
     # =============================================================================
-    # Update scene
+    # Check equilibrium
     # =============================================================================
 
-    # check equilibrium
-    # turn of forces if no equilibrium
-    # turn off external labels if no equilibrium
+    max_angle = session.settings.solver.max_angle
+    min_force = session.settings.solver.min_force
+    max_ldiff = session.settings.solver.max_ldiff
+
+    result = check_equilibrium(
+        form.diagram,
+        force.diagram,
+        tol_angle=max_angle,
+        tol_force=min_force,
+        tol_ldiff=max_ldiff,
+    )
+
+    if result:
+        session.set("equilibrium", True)
+        session.settings.form.show_external_force_labels = True
+
+    else:
+        print("The diagrams ARE NOT in equilibrium.")
+
+        session.set("equilibrium", False)
+        session.settings.form.show_external_force_labels = False
+        session.settings.form.show_independent_edge_labels = True
+
+    # =============================================================================
+    # Update scene
+    # =============================================================================
 
     session.scene.redraw()
 

@@ -34,12 +34,8 @@ def RunCommand():
 
     force.anchor = vertex
 
-    # move to update_location_form_current_anchorpoint
     vertex_guid = {v: k for k, v in force._guid_vertex.items()}
-    guid = vertex_guid[vertex]
-    rpoint = compas_rhino.objects.get_point_coordinates([guid])[0]
-    point = compas_rhino.conversions.point_to_compas(rpoint)
-    force.location = point
+    force.location = compas_rhino.conversions.pointobject_to_compas(vertex_guid[vertex])
 
     # =============================================================================
     # Update Scene

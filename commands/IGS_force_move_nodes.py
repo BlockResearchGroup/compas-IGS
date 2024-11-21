@@ -7,7 +7,6 @@ import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 from compas_ags.ags import form_update_from_force
 from compas_igs.session import IGSSession
 from compas_igs.utilities import check_equilibrium
-from compas_igs.utilities import compute_angle_deviations
 
 # =============================================================================
 # Command
@@ -46,19 +45,28 @@ def RunCommand():
     # Check equilibrium
     # =============================================================================
 
-    # max_angle = session.settings.solver.max_angle
-    # min_force = session.settings.solver.min_force
+    max_angle = session.settings.solver.max_angle
+    min_force = session.settings.solver.min_force
+    max_ldiff = session.settings.solver.max_ldiff
 
-    # compute_angle_deviations(form.diagram, force.diagram, tol_force=min_force)
-    # check = check_equilibrium(form.diagram, force.diagram, tol_angle=max_angle, tol_force=min_force)
-    # deviation = max(form.diagram.edges_attribute("a"))
+    result = check_equilibrium(
+        form.diagram,
+        force.diagram,
+        tol_angle=max_angle,
+        tol_force=min_force,
+        tol_ldiff=max_ldiff,
+    )
 
-    # if check:
-    #     message = f"Diagrams are parallel!\nMax. angle deviation: {deviation:.2g} deg\nThreshold assumed: {max_angle:.2g} deg."
-    # else:
-    #     message = f"Diagrams are not parallel!\nMax. angle deviation: {deviation:.2g} deg\nThreshold assumed: {max_angle:.2g} deg."
+    if result:
+        session.set("equilibrium", True)
+        session.settings.form.show_external_force_labels = True
 
-    # rs.MessageBox(message, title="Info")
+    else:
+        print("The diagrams ARE NOT in equilibrium.")
+
+        session.set("equilibrium", False)
+        session.settings.form.show_external_force_labels = False
+        session.settings.form.show_independent_edge_labels = True
 
     # =============================================================================
     # Update scene

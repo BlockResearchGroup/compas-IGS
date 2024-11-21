@@ -14,6 +14,8 @@ from compas_igs.session import IGSSession
 def RunCommand():
     session = IGSSession()
 
+    return session.warn("Constraints are not available yet.")
+
     form = session.find_formdiagram(warn=True)
     if not form:
         return

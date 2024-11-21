@@ -18,9 +18,23 @@ def RunCommand():
     if not form:
         return
 
+    # =============================================================================
+    # Command
+    # =============================================================================
+
     form.assign_forces()
 
+    # =============================================================================
+    # Update Scene
+    # =============================================================================
+
     rs.UnselectAllObjects()
+
+    session.set("equilibrium", False)
+    session.settings.form.show_external_force_labels = False
+    session.settings.form.show_independent_edge_labels = True
+
+    session.scene.redraw()
 
     if session.settings.autosave:
         session.record(name="Form Assign Forces")

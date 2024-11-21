@@ -23,6 +23,10 @@ def RunCommand():
     if not force:
         return
 
+    # =============================================================================
+    # Command
+    # =============================================================================
+
     lp = compute_loadpath(form.diagram, force.diagram)
 
     rs.MessageBox(f"The total load-path of the structure is {lp:.2f} kNm.", title="Info")

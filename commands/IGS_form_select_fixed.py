@@ -18,13 +18,23 @@ def RunCommand():
     if not form:
         return
 
-    if form.select_fixed_vertices():
-        rs.UnselectAllObjects()
+    # =============================================================================
+    # Command
+    # =============================================================================
 
-        form.redraw_vertices()
+    if not form.select_fixed_vertices():
+        return
 
-        if session.settings.autosave:
-            session.record(name="Form Select Fixed Vertices")
+    # =============================================================================
+    # Update Scene
+    # =============================================================================
+
+    rs.UnselectAllObjects()
+
+    session.scene.redraw()
+
+    if session.settings.autosave:
+        session.record(name="Form Select Fixed Vertices")
 
 
 # =============================================================================

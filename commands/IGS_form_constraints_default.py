@@ -14,6 +14,8 @@ from compas_igs.session import IGSSession
 def RunCommand():
     session = IGSSession()
 
+    return session.warn("Constraints are not available yet.")
+
     form = session.find_formdiagram(warn=True)
     if not form:
         return
@@ -22,8 +24,16 @@ def RunCommand():
     if not force:
         return
 
+    # =============================================================================
+    # Command
+    # =============================================================================
+
     form.diagram.identify_constraints()
     force.diagram.constraints_from_dual()
+
+    # =============================================================================
+    # Update Scene
+    # =============================================================================
 
     rs.UnselectAllObjects()
 

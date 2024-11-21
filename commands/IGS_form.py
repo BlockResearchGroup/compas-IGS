@@ -4,6 +4,8 @@
 
 import pathlib
 
+import compas_rhino.conversions
+
 import rhinoscriptsyntax as rs  # type: ignore
 
 import compas_rhino.objects
@@ -39,7 +41,7 @@ def RunCommand():
         if not guids:
             return
 
-        lines = compas_rhino.objects.get_line_coordinates(guids)
+        lines = compas_rhino.conversions.get_line_coordinates(guids)
         graph = FormGraph.from_lines(lines)
 
         if not graph.is_planar_embedding():
@@ -86,6 +88,10 @@ def RunCommand():
 
     if not formdiagram:
         return
+
+    session.settings.form.show_internal_force_pipes = False
+    session.settings.form.show_external_force_labels = False
+    session.settings.form.show_independent_edge_labels = False
 
     session.scene.add(formdiagram)
     session.scene.redraw()

@@ -6,8 +6,7 @@ import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
 from compas_ags.ags import form_update_q_from_qind
 from compas_igs.session import IGSSession
-
-# from compas_igs.utilities import check_equilibrium
+from compas_igs.utilities import check_equilibrium
 
 # =============================================================================
 # Command
@@ -21,43 +20,47 @@ def RunCommand():
     if not form:
         return
 
+    force = session.find_forcediagram(warn=False)
+
     # =============================================================================
     # Command
     # =============================================================================
 
     form_update_q_from_qind(form.diagram)
 
-    # max_angle = session.settings.solver.max_angle
-    # min_force = session.settings.solver.min_force
-    # max_ldiff = session.settings.solver.max_ldiff
+    # =============================================================================
+    # Check equilibrium
+    # =============================================================================
 
-    # result = check_equilibrium(
-    #     form.diagram,
-    #     force.diagram,
-    #     tol_angle=max_angle,
-    #     tol_force=min_force,
-    #     tol_ldiff=max_ldiff,
-    # )
+    if force:
+        max_angle = session.settings.solver.max_angle
+        min_force = session.settings.solver.min_force
+        max_ldiff = session.settings.solver.max_ldiff
 
-    # if not result:
-    #     message = "Diagrams ARE NOT in equilibrium."
-    #     rs.MessageBox(message)
+        result = check_equilibrium(
+            form.diagram,
+            force.diagram,
+            tol_angle=max_angle,
+            tol_force=min_force,
+            tol_ldiff=max_ldiff,
+        )
 
-    #     # control through settings
-    #     form.show_internal_forcepipes = False
-    #     form.show_external_labels = False
+        if result:
+            session.set("equilibrium", True)
+            session.settings.form.show_external_force_labels = True
 
-    # else:
-    #     # control through settings
+        else:
+            print("The diagrams ARE NOT in equilibrium.")
 
-    form.show_internal_forcepipes = True
-    form.show_external_labels = True
+            session.set("equilibrium", False)
+            session.settings.form.show_external_force_labels = False
+            session.settings.form.show_independent_edge_labels = True
 
     # =============================================================================
     # Update scene
     # =============================================================================
 
-    form.redraw()
+    session.scene.redraw()
 
     if session.settings.autosave:
         session.record(name="Form Update From Qind")

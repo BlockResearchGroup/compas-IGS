@@ -14,10 +14,13 @@ from compas.geometry import transform_vectors
 from compas.scene.descriptors.color import ColorAttribute
 from compas.scene.descriptors.colordict import ColorDictAttribute
 from compas_ags.diagrams import ForceDiagram
+from compas_igs.session import IGSSession
 from compas_rui.scene import RUIMeshObject
 
 
 class RhinoForceObject(RUIMeshObject):
+    session = IGSSession()
+
     vertexcolor = ColorDictAttribute(default=Color.black())
     vertexcolor_fixed = ColorAttribute(Color.red())
     vertexcolor_lineconstraint = ColorAttribute(Color.white())
@@ -140,6 +143,17 @@ class RhinoForceObject(RUIMeshObject):
                 self.edgecolor[edge] = self.edgecolor_reaction
             elif self.diagram.is_dual_edge_load(edge):
                 self.edgecolor[edge] = self.edgecolor_load
+            else:
+                if self.session.get("equilibrium", False):
+                    force = self.diagram.dual_edge_force(edge)
+                    if force > 0:
+                        self.edgecolor[edge] = self.tensioncolor
+                    elif force < 0:
+                        self.edgecolor[edge] = self.compressioncolor
+                    else:
+                        self.edgecolor[edge] = self.edgecolor.default
+                else:
+                    self.edgecolor[edge] = self.edgecolor.default
 
         return super().draw_edges()
 
@@ -202,55 +216,6 @@ class RhinoForceObject(RUIMeshObject):
     # =============================================================================
     # Move
     # =============================================================================
-
-    def move(self) -> bool:
-        color = Rhino.ApplicationSettings.AppearanceSettings.FeedbackColor
-
-        vertex_p0 = {v: Rhino.Geometry.Point3d(*self.mesh.vertex_coordinates(v)) for v in self.mesh.vertices()}
-        vertex_p1 = {v: Rhino.Geometry.Point3d(*self.mesh.vertex_coordinates(v)) for v in self.mesh.vertices()}
-
-        edges = list(self.mesh.edges())
-
-        def OnDynamicDraw(sender, e):
-            try:
-                current = e.CurrentPoint
-                vector = current - start
-                for vertex in vertex_p1:
-                    vertex_p1[vertex] = vertex_p0[vertex] + vector
-                for u, v in iter(edges):
-                    sp = vertex[u]
-                    ep = vertex[v]
-                    e.Display.DrawDottedLine(sp, ep, color)
-            except Exception as e:
-                print(e)
-
-        gp = Rhino.Input.Custom.GetPoint()
-
-        gp.SetCommandPrompt("Point to move from?")
-        gp.Get()
-
-        if gp.CommandResult() != Rhino.Commands.Result.Success:
-            return False
-
-        start = gp.Point()
-
-        gp = Rhino.Input.Custom.GetPoint()
-        gp.SetCommandPrompt("Point to move to?")
-        gp.DynamicDraw += OnDynamicDraw
-        gp.Get()
-
-        if gp.CommandResult() != Rhino.Commands.Result.Success:
-            return False
-
-        end = gp.Point()
-        vector = compas_rhino.conversions.vector_to_compas(end - start)
-
-        for _, attr in self.mesh.vertices(True):
-            attr["x"] += vector[0]
-            attr["y"] += vector[1]
-            attr["z"] += vector[2]
-
-        return True
 
     def move_vertex(
         self,

@@ -22,13 +22,23 @@ def RunCommand():
     if not force:
         return
 
-    if force.select_fixed_vertices():
-        rs.UnselectAllObjects()
+    # =============================================================================
+    # Command
+    # =============================================================================
 
-        force.redraw_vertices()
+    if not force.select_fixed_vertices():
+        return
 
-        if session.settings.autosave:
-            session.record(name="Force Select Fixed Vertices")
+    # =============================================================================
+    # Update scene
+    # =============================================================================
+
+    rs.UnselectAllObjects()
+
+    session.scene.redraw()
+
+    if session.settings.autosave:
+        session.record(name="Force Select Fixed Vertices")
 
 
 # =============================================================================

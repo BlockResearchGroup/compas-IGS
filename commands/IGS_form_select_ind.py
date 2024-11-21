@@ -18,13 +18,27 @@ def RunCommand():
     if not form:
         return
 
-    if form.select_independent_edges():
-        rs.UnselectAllObjects()
+    # =============================================================================
+    # Conmmand
+    # =============================================================================
 
-        form.redraw_edges()
+    if not form.select_independent_edges():
+        return
 
-        if session.settings.autosave:
-            session.record(name="Form Select Independent Edges")
+    # =============================================================================
+    # Update Scene
+    # =============================================================================
+
+    rs.UnselectAllObjects()
+
+    session.set("equilibrium", False)
+    session.settings.form.show_external_force_labels = False
+    session.settings.form.show_independent_edge_labels = True
+
+    session.scene.redraw()
+
+    if session.settings.autosave:
+        session.record(name="Form Select Independent Edges")
 
 
 # =============================================================================

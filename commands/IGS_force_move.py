@@ -2,11 +2,39 @@
 # venv: brg-csd
 # r: compas_session>=0.4.5, compas_ags>=1.3.2
 
+import Rhino  # type: ignore
 import rhinoscriptsyntax as rs  # type: ignore  # noqa: F401
 
 import compas_rhino.conversions
 import compas_rhino.objects
+from compas_igs.scene import RhinoForceObject
 from compas_igs.session import IGSSession
+
+
+def move(force: RhinoForceObject):
+    start = rs.GetPoint("Start point")
+    if not start:
+        return
+
+    def OnDynamicDraw(sender, e):
+        end = e.CurrentPoint
+        e.Display.DrawDottedLine(start, end, color)
+
+    color = Rhino.ApplicationSettings.AppearanceSettings.FeedbackColor
+
+    gp = Rhino.Input.Custom.GetPoint()
+    gp.DynamicDraw += OnDynamicDraw
+    gp.SetCommandPrompt("End of line constraint")
+    gp.Get()
+    if gp.CommandResult() != Rhino.Commands.Result.Success:
+        return
+
+    end = gp.Point()
+
+    vector = compas_rhino.conversions.point_to_compas(end) - compas_rhino.conversions.point_to_compas(start)
+
+    force.location = force.location + vector
+
 
 # =============================================================================
 # Command
@@ -24,17 +52,20 @@ def RunCommand():
     if not force:
         return
 
-    if force.move():
-        # move to update_location_from_current_anchorpoint
-        vertex_guid = {v: k for k, v in force._guid_vertex.items()}
-        guid = vertex_guid[force.anchor]
-        point = compas_rhino.conversions.pointobject_to_compas(guid)
-        force.location = point
+    # =============================================================================
+    # Command
+    # =============================================================================
 
-        force.redraw()
+    move(force)
 
-        if session.settings.autosave:
-            session.record(name="Force Move")
+    # =============================================================================
+    # Update Scene
+    # =============================================================================
+
+    session.scene.redraw()
+
+    if session.settings.autosave:
+        session.record(name="Force Move")
 
 
 # =============================================================================

@@ -19,6 +19,10 @@ def RunCommand():
     if not form:
         return
 
+    # =============================================================================
+    # Command
+    # =============================================================================
+
     k, m = form_count_dof(form.diagram)
     inds = len(list(form.diagram.edges_where(is_ind=True)))
 
