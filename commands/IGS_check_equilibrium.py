@@ -23,6 +23,10 @@ def RunCommand():
     if not force:
         return
 
+    # =============================================================================
+    # Command
+    # =============================================================================
+
     max_angle = session.settings.solver.max_angle
     min_force = session.settings.solver.min_force
     max_ldiff = session.settings.solver.max_ldiff
@@ -34,8 +38,6 @@ def RunCommand():
         tol_force=min_force,
         tol_ldiff=max_ldiff,
     )
-
-    # max_dev = max(form.diagram.edges_attribute("a"))
 
     if not result:
         message = "Diagrams ARE NOT in equilibrium."
