@@ -23,6 +23,10 @@ def RunCommand():
     if not force:
         return
 
+    # =============================================================================
+    # Command
+    # =============================================================================
+
     max_angle = session.settings.solver.max_angle
     min_force = session.settings.solver.min_force
 
@@ -32,9 +36,9 @@ def RunCommand():
     result = max_dev <= max_angle
 
     if not result:
-        message = f"Diagrams ARE NOT parallel: {max_dev} > {max_angle}"
+        message = f"Diagrams ARE NOT parallel: {max_dev} > tolerance ({max_angle})"
     else:
-        message = f"Diagrams ARE parallel: {max_dev} <= {max_angle}"
+        message = f"Diagrams ARE parallel: {max_dev} <= tolerance ({max_angle})"
 
     rs.MessageBox(message)
 
